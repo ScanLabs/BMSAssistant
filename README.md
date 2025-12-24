@@ -1,23 +1,23 @@
 # BMSAssistant
-DALY - JK - 100Balance - Hi and other BMS - ALL in ONE Assistant
+DALY - JK - 100Balance - DALY Clones such as Hi - ALL in ONE Assistant - SMART BMS Data Extractor
 
 # COMPATIBILITY LIST:
 -  **DALY** – NEWER & FORMER Models with UART(1) Interface ( RS232 )
--  JK BMS via GPS port
+-  JK BMS via GPS port - JK-Bx
     -  JK-BD6AxxS-10P / JK-BD6AxxS-12P / JK-BD6AxxS-15P/ JK-B1AxxS-15PJK-B2AxxS-15P/ JK-B2AxxS-20P
--  JK BMS via **RS485** port ( RS485A only )
+-  JK BMS via **RS485** port ( RS485A only for the moment)
     -  JK-BD6AxxS-10P, JK-BD6AxxS-12P, JK-BD6AxxS-15P, JK-B1AxxS-15P , JK-B2AxxS-15P, JK-B2AxxS-20P
 
 # Feauture set :
-- **BUILD YOURSELF** full giude available at http://www.smartbms.it
+- **BUILD YOURSELF** full guide available at http://www.smartbms.it
 -	CONFIGURE in 2 minutes !
     -	Dongle starts as Access Point – you connect via WiFi and configure
     -	Simple AT serial command interface for first provisioning available as well
--	Support for **COLOR DISPLAY**
+-	Support for Remote **COLOR DISPLAY**
     - **openHasp** and **TASMOTA** supported
     - Pre-formatted DASHBOARD
     - each display can monitor multiple battery packs even placed on different locations via MQTT
-    - POINT 2 POINT connection between BMS dongle and TASMOTA display without internet
+    - POINT 2 POINT connection between BMS dongle and TASMOTA display without internet via MODBUS
 -	**BMS to MQTT**  ( TLS & JSON ) to export main battery pack parameters and alarms
     - publish time can be set from 5 seconds to hours
 	  - select which parameter you want to publish
@@ -28,14 +28,16 @@ DALY - JK - 100Balance - Hi and other BMS - ALL in ONE Assistant
 	      - Mosquitto on Home Assistant ( TLS / uncrypted )
 	      - MQTTHQ ( uncrypted )
 	      - Home Assistant compatibility proven
--	**BMS to MODBUS**
+-	**BMS to MODBUS Server**
 	Perfect for Home Assistant TCP MODBUS Users
 	Perfect for Smartphone APPs like **Virtuino** 
--	**BMS to PUSH NOTIVICATION**
+-	**BMS to MODBUS Client**
+  	Publish BMS data to a ModBus Server - simple setup via Json file
+-	**BMS to PUSH NOTIFICATION**
       support **PUSHSAFER** and **PUSHOVER** serives
       Send push Notification to your Mobile or PC, Telegram etc !
 	    Daily report sent at SunSet / SunRise / SOC 100% / Alarms info
--	**Works WITH or WHITOUT INTERNET** connection ( Acces Point or Station )
+-	**Works WITH or WHITHOUT INTERNET** connection ( Acces Point or Station )
 	    Perfect when you don’t have Internet connection – Like on Boat, Cottage …
 	    almost All the feature sets are available on both AP and STA mode .
 - **STORAGE 6++ months of daily BMS hystory** onboard
