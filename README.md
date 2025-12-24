@@ -1,4 +1,4 @@
-# BMSAssistant
+# ScanLabs Smart BMS data Extractor aka BMSAssistant
 DALY - JK - 100Balance - DALY Clones such as Hi - ALL in ONE Assistant - SMART BMS Data Extractor
 
 # COMPATIBILITY LIST:
