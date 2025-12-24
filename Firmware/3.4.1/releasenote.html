@@ -1,0 +1,386 @@
+<div><strong>DALYBMSWIFI.com or SMARTBMS.it for instructions</strong></div>
+<div>&nbsp;</div>
+<div>REMEMBER ! Default html USERNAME: <b>admin</b> and PASSWORD: <b>admin!</b></div>
+<div>REMEMBER ! Default Host Name is <b>SmartBMS</b>  (note: case insensitive)
+<div>&nbsp;</div>
+<div>SUPPORT on <strong><a href="https://discord.com/invite/AypajkSGgQ">DISCORD</a></strong></div>
+<div>&nbsp;</div>
+<div><b>3.4.1 released on 26 November 2025</b></div>
+<div>CAPTIVE PORTAL</div>
+<div>&nbsp;&nbsp;Fixed bug on Captive Portal</div></div>
+<div>AUTO FIRMWARE UPDATE</div> 	
+<div>&nbsp;&nbsp;Fixed a bug during download of new webpage set</div> 
+<div>&nbsp;</div>
+<div>3.4.0 released on 31 October 2025</div>
+<div>CAPTIVE PORTAL</div>
+<div>&nbsp;&nbsp;Added Captive Portal for first provisioning</div>
+<div>WEBPAGES</div>
+<div>&nbsp;&nbsp; + Access Point SCAN feature</div>
+<div>&nbsp;&nbsp; + check button to show Passwords</div>
+<div>AUTO FIRMWARE UPDATE</div> 	
+<div>&nbsp;&nbsp;Enhanced with Auto upgrade of Web Pages set</div> 	
+<div>&nbsp;&nbsp;+ Enable button added on MISC page</div> 	
+<div>DALY BMS</div>
+<div>&nbsp;&nbsp;SET Current SOC* on MISC page added</div>
+<div>&nbsp;&nbsp;*DALY Only</div>
+<div>ONBOARD OLED DISPLAY</div> 	
+<div>&nbsp;&nbsp;Added LCD Page with Status of Active services</div>
+<div>TASMOTA COLOR MQTT/MODBUS DISPLAY</div> 	
+<div>&nbsp;&nbsp;Support for Diplay 3.5" ESP32-035 fully managed</div> 	
+<div>CURRENT MONITOR</div> 	
+<div>&nbsp;&nbsp;To save memory needed to reduce the time windows to 8h (24h before)</div> 	
+<div>&nbsp;</div>
+<div>3.3.0 released on 28 August 2025</div>
+<div>NTP improvement</div> 	
+<div>&nbsp;&nbsp;tnx to user David from Italy, a bug on Network Time Server lib has been find and fix</div>
+<div>HTTP PORT</div> 	
+<div>&nbsp;&nbsp;now HTTP Server Port 80 is selectable from Settings page</div>
+<div>&nbsp;&nbsp;NOTE: New Default HTTP Port is 80 ( formerly 6789 )</div>
+<div>MODBUS Client</div> 	
+<div>&nbsp;&nbsp;tnx to user IONUT Romania, MODBUS Client has been added and debugged</div>
+<div>&nbsp;&nbsp;Configuration through file <b>"ModBusClient.json"</b></div>
+<div>&nbsp;&nbsp;Instruction on the webpage "ModBus"</div>
+<div>ONBOARD OLED DISPLAY</div> 	
+<div>&nbsp;&nbsp;NodeMCU with OLED Display now supported. Need HW changes, see the manual !</div> 	
+<div>AUTO FIRMWARE UPDATE</div> 	
+<div>&nbsp;&nbsp;Latest FW available checked at boot time - if present , self upgrade</div> 	
+<div>NOTIFICATION</div> 	
+<div>&nbsp;&nbsp;New "Filter" added to avoid ALARMS+SOC 100 are sent at the same time</div> 	
+<div>&nbsp;&nbsp;PUSHSAFER now send also the remaining number API TOKEN</div> 	
+<div>UART TUNNEL: Fix Virtual tunnel to allow PC Sw to remotely manage the BMS</div>
+<div>TASMOTA COLOR MQTT/MODBUS DISPLAY</div> 	
+<div>&nbsp;&nbsp;AUTOCONFIG: copy the dongle's "config.txt" file on the Tasmota's files system</div> 	
+<div>&nbsp;&nbsp;POWER CHART: from Display page, select if Chart are enabled and the Time Windows duration</div> 	
+<div>&nbsp;&nbsp;&nbsp;NOTE: TASMOTA DISPLAY with <b>PSRAM</b> is mandatory especially for time windows > 1h</div> 	
+<div>&nbsp;</div>
+<div>3.2.4 released on 16 June 2025</div>
+<div>MODBUS</div> 	
+<div>&nbsp;&nbsp;New Registers to support MODBUS Remote Color Display</div> 	
+<div>&nbsp;&nbsp;details on the dongle's MODBUS page</div> 	
+<div>NOTIFICATION</div> 	
+<div>&nbsp;&nbsp;New "Time Filters" on Alarms to avoid the same alarm is sent multiple time</div> 	
+<div>COLOR DISPLAY MODBUS</div> 	
+<div>&nbsp;&nbsp;Now Tosmota Color display support MODBUS and MQTT ( also in parallel )</div> 
+<div>&nbsp;&nbsp;Tamosta MODBUS is perfect for Dongle-to-Display Point 2 Point of for ModBus Lovers</div> 
+<div>&nbsp;</div>
+<div>3.2.3 released on 01 May 2025</div>
+<div>+Improved stability : WDT Reset in case of long MQTT connection time</div>
+<div>+Addressed crash at boot time: new switch-on services sequence added<div>
+<div>+Added Time Zone Management <i>Thanks to Kyle Australia for debugging</i></div>
+<div>+Fixed MODBUS SWAP BYTE issue</div>
+<div>+Added PUSHSAFER now is working for daily-reports with free license</div>
+<div>+Added PUSHOVER Service - similar to PUSHSAFER with 10K free messages to mobile <i>Thanks Jean Germany</i></div>
+<div>+Added on JK layout added Battery Remaining Ah <i>Thanks to Theo Greece asking</i></div>
+<div>+Added MQTT PREFIX for NON Json export -mode <b>Flat1</b></div>
+<div>COLOR DISPLAY</div>
+<div>+Added "DashBoard NAME" Exported for TASMOTA remote display & on main web page</div>
+<div>+Added Display Brightness and multi page rolling timing settings</div>
+<div>+Added Dongle export its "Time Zone" to TASMOTA display
+<div>+Rewritten from scratch a new TASMOTA autoexec.be condiguration file now supporting dinamic configuration</div>
+<div>&nbsp;</div><div>&nbsp;</div>
+<div>3.2.2 released on 25 Feb 2025</div>
+<div>+ Add selection of time format 24h/12h</div>
+<div>COLOR DISPLAY</div>
+<div>+ Add support of TASMOTA based MQTT Color Display</div>
+<div>&nbsp;</div>
+<div>3.2.1 released on 05 Jan 2025</div>
+<div>+ Fixed Race Condition on MQTT with very fast Publish time</div>
+<div>&nbsp;</div>
+<div>3.2.0 released on 04 Jan 2025</div>
+<div>+ Platform Architecture partially reviewed to gain memory</div>
+<div>+ WebSocket introduced on BMS pages to avoid old style web page refresh</div>
+<div>&nbsp;-> BMS data web page is refreshed every 5s</div>
+<div>+ WebServer HTTP PORT now customizable on "Settings" page</div>
+<div>COLOR DISPLAY</div>
+<div>+Fixed openHASP generated page to avoid to jump nowhere when touching the screen</div>
+<div>LCD DISPLAY ON BOARD *EXPERIMENTAL*</div>
+<div>+added support for I2C LCD on board</div>
+<div>&nbsp;</div>
+<div>3.1.0 released on 23 Nov 2024</div>
+<div>+ REMOTE MQTT DISPLAY based on openHASP config file generator &amp; Manuals</div>
+<div>+ CHARGE-DISCHARGE MOS SETTINGS from WebPage and MQTT</div>
+<div>&nbsp; Note: Enable this feature from MISC page - iotMQTT Panel users need to REgenerate &nbsp;and import Json file</div>
+<div>&nbsp; Note: MQTT Mos status is checked every 30s or at half of the MQTT Publish time</div>
+<div>+ MODBUS TCP SWAP BYTES on float 32<br>added ALERT on main web page about “NEW FIRMWARE AVAILABLE”</div>
+<div>+ on MISC the possibility to NOT check the RESET button to avoid self restore to factory due to missing energy</div>
+<div>+ support of RS485 Transceiver Enable signals for JK PB2</div>
+<div>+ control on MQTT publish time vs BMS Polling time to avoid race conditions</div>
+<div>* fixed (again :-( &nbsp;) &nbsp;JK cycle counting</div>
+<div>+ improved robustness on file system management</div>
+<div>&nbsp;</div>
+<div>3.0.8 released on 14 Sept 2024</div>
+<div>* fixed: Type2 MQTT-export reported as unfunctional    -THANKS: to Rolf H.- Germany - for bug discovery & reporting</div>
+<div>* fixed: Cycle Counter for JK BMS reported as always 0 -THANKS: to Georg K.- Hungary - for bug discovery & reporting</div>
+<div>+ on "/config" page added the possibility to edit the Host Name - usefull in case of multiple dongles on the same network</div>
+<div>  use ping HostName  or ping HostName.local ( where HostName is the Host name you set )</div>
+<div>+ on "/config" page added WiFi signal strength in Station mode</div>
+<div>&nbsp;</div>
+<div>3.0.7 released on 10 Sept 2024</div>
+<div>* fixed: Restore to Factory feature broken</div>
+<div>++NOTE++ : users with rel 3.0.6 needs to use the Serial Console to Restore to factory</div>
+<div>THANKS: to Georg K.- Hungary - for bug discovery & reporting</div>
+<div>&nbsp;</div>
+<div>3.0.6 released on 07 Sept 2024</div>
+<div>* fixed: wrong race condition can lead to system crash</div>
+<div>&nbsp;</div>
+<div>3.0.5 released on 15 Aug 2024</div>
+<div>* fixed: Free SW had trouble getting BMS fresh data</div>
+<div>THANKS: to edbu10 - Germany - for sw bug discovery </div>
+<div>&nbsp;</div>
+<div>3.0.4 released on 04 Aug 2024</div>
+<div>* fixed deadlock after Restore to Factory</div>
+<div>THANKS to Gianluca -Italy- for testing new DALY (small connector) reporting full compatibility</div>
+<div>&nbsp;</div>
+<div>3.0.3 released on 03 Aug 2024</div>
+<div>+Platform changes to enable remote licencing</div>
+<div>--> free platform is full functional with limited BMS/MQTT/ModBUS TCP polling/publishing time and no PUSHSAFER services</div> 
+<div>+General improvement on platform stability and available memory</div>
+<div>+DALY protocol re-written from scratch - lighter , quicker and better</div>
+<div>+Added Newer DALY protol selectable from MISC web page</div>
+<div>THANKS: to Paul S. -Germany- for remote debugging on his platform</div>
+<div>&nbsp;</div>
+<div>2.1.4 released on 06 June 2024</div>
+<div>* fixed some webpage check-buttons were not reporting the real state of the setting (introduced with 2.1.3 )</div>
+<div>thanks to user Paolo G. for testing and trouble reporting</div>
+<div>+ on MISC page added 3 new settings:</div>
+<div>->MidNight Dongle Self Reboot</div>
+<div>->Wireless Link missing Self Reboot</div>
+<div>->Switch between DALY and JK webpage Layout</div>
+<div>+ added new controls on PushSafer in case of Push TX issue</div>
+<div>+ improvements on file system management</div>
+<div>+ added link to website to get access to configuration procedures</div>
+<div>&nbsp;</div>
+<div>2.1.3 released on 25 May 2024</div>
+<div>+ PUSHSAFER username field to get access to #of Push credits</div>
+<div>+ RESET BUTTON now acts as:</div>
+<div>   -> <b>Switch to AP mode</b> : Press RESET Button 3 times - <b>after each press wait about 5s till blue led quick blink</b></div>
+<div>   -> <b>Restore to Factory default</b> :  Press RESET Button 6 times - <b>after each press wait abous 5s till blue led quick blink</b></div>
+<div>+ New Blue LED mimic: Slow Blinking = STATION MODE // quick Blinking = AP Mode</div>
+<div>+ Added the possibility to download all the .CSV files for the selected month at once</div>
+<div>+ clicking on the weather you access the 1w forecast</div>
+<div>&nbsp;</div>
+<div>2.1.2 released on 11 May 2024</div>
+<div>* fixed - PushSafer Fix multiple alarm push sent very close</div>
+<div>&nbsp;</div>
+<div>2.1.1 released on 08 May 2024</div>
+<div>+ added new MODBUS TCP registers</div>
+<div>+ added new Servise PUSHSAFER</div>
+<div>x to improve AP interoperability - removed WiFi Sleep mode</div>
+<div>* fixed - Virtual console timeout</div>
+<div>= experimental - emails manager for daily reporting </div>
+<div>&nbsp;</div>
+<div>2.1.0 released on 14 Apr 2024</div>
+<div>+ added MODBUS TCP on port 502</div>
+<div>* fixed Json Topic length increased to 19 chars - *thanks to Ross M. for reporting the limit*</div>
+<div>x to improve AP interoperability - WiFi is now set to G Mode only</div>
+<div>&nbsp;</div>
+<div>2.0.7 released on 30 Mar 2024</div>
+<div>+ added the following AT commands</div>
+<div>&nbsp;</div>
+<div>
+<table style="border-collapse: collapse; width: 50%; height: 270px;" border="1">
+<tbody>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">Command</td>
+<td style="width: 50%; height: 18px;">Description</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+WPORT=port</td>
+<td style="width: 50%; height: 18px;">SET WebServer HTTP Port default port <b>6789</b></td>
+</tr>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+WPORT?</td>
+<td style="width: 50%; height: 18px;">GET WebServer HTTP Port</td>
+</tr>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+WPWR=dBm</td>
+<td style="width: 50%; height: 18px;">SET WiFi power in dBm 0-20 , default 15dBm</td>
+</tr>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+WPWR?</td>
+<td style="width: 50%; height: 18px;">GET WiFi power in dBm</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>&nbsp;</div>
+<div>+ added BONJOUR/mDNS ->  ping <b>smartbms</b> , return the IP of the dongle </div>
+<div>+ added BONJOUR/mDNS ->  http://<b>smartbms</b>:6789 (or your PORT) access to web pages </div>
+<div>+ added EXPERIMENTAL export of json config file for IoTMQTT Panel APP for IoS and Android </div>
+<div>- removed access to "fileSytem" upload to avoid from / catastrofic updalod on field
+<div>&nbsp;</div>
+<div>2.0.6 released on 20 Mar 2024</div>
+<div>+ After "Factory Reset" dongle starts as Access Point</div>
+<div>  SSID : <b>dalyBMSWiFi.com</b> , password: <b>123456789</b>  defaul IP: <b>192.168.0.1</b></div>
+<div>  connect to AP and configure as you whish. 
+<div>  <b>NOTE1</b>: this works as an alternative to UART AT Command Console</div>
+<div>  <b>NOTE2</b>: to Restore to Factory default, either you use UART AT Command or the \"Settings\" web page</div>
+<div>+ Time Zone automatically detected through the geo Coordinates. No need to adjust TZ any longer in STA mode</div>
+<div>+ Anomaly detection triggered on MQTT failures
+<div>@ Experimental :  adding "/IoTMQTTPanel" to url it generates a JSON config file to be used with IoTMQTTPanel Android app</div>
+<div>* Fix : MQTT dinamic memory allocation</div>
+<div></div>
+<div>&nbsp;</div>
+<div>2.0.5 released on 08 Mar 2024</div>
+<div>+ multiple type of MQTT Json export added with webpage showing differt configurations</div>
+<div>+ main MQTT Json TOPIC editable</div>
+<div>+ FULLY Functional with JK-BMS UART (GPS) tested on JK-B2AxxS-15P : standing to JK protocol docs it works also with</div>
+<div>  JK-BD6AxxS-10P / JK-BD6AxxS-12P / JK-BD6AxxS-15P/ JK-B1AxxS-15P / JK-B2AxxS-15P/ JK-B2AxxS-20P</div>
+<div>* Fix: JSON MQTT limit on parameter lenght</div>
+<div>+ Added MQTT Connection-Test Button</div>
+<div>+ Added fixes and patched to MQTT Library to make it more robust</div>
+<div>* Fix: DALY->now working with odd battery number ( Thanks to Elio form SARDEGNA )</div>
+<div>* Fix: View of Stored Battery files not working with odd number of batteries</div>
+<div>&nbsp;</div>
+<div>2.0.4 released on 17 Feb 2024</div>
+<div>+ WiFi output power on "Config" page</div>
+<div><b>NOTE:</b> if you notice missing PING to the dongle try to LOWER the output power - No reboot needed</div>
+<div>&nbsp;</div>
+<div>2.0.3 released on 16 Feb 2024</div>
+<div>* Fix wrong conversion on pack watts</div>
+<div>+ web.all file cannot be accidentaly loaded from "upgrade page" </div>
+<div>&nbsp;</div>
+<div>2.0.2 released on 15 Feb 2024</div>
+<div>+ Added MQTT Json flag on MQTT config page</div>
+<div>{</div>
+<div>&nbsp; "bat": {</div>
+<div>&nbsp; &nbsp; "0": 2947,       battery 1 [mv]</div>
+<div>&nbsp; &nbsp; .......</div>
+<div>&nbsp; &nbsp; "15": 2949       last battery [mv]</div>
+<div>&nbsp; },</div>
+<div>&nbsp; "SOC": 27,              Status of Charge %</div>   
+<div>&nbsp; "PWT": 42,              Pack Watt</div>
+<div>&nbsp; "PMV": "47.10",         Pack Volts</div>
+<div>&nbsp; "PMA": "0.90",          Pack Amps</div>
+<div>&nbsp; "PDV": 6,               Delta mVolts between cells</div>
+<div>&nbsp; "AMV": "2946.00"        Average mVolts on cells</div>
+<div>&nbsp; "TMP": 10,              Pack temperature in C</div>
+<div>&nbsp; "ALM": "0,0,0,0,0,0,0"; Alarms byte stream</div>
+<div>}</div>
+<div>NOTE: due to limited memory NOT all the parameters che be exported at teh same time</div>
+<div>&nbsp;</div>
+<div>2.0.1</div>
+<div>* Fixed Involontary DISCHARGE MOSFET OFF at startup</div>
+<div>&nbsp;</div>
+<div>2.0.0 released on Feb 11 2024</div>
+<div>* Fixed - weather forecast</div>
+<div>* Fixed wrong file name "batt_"</div>
+<div>+ New SW structure now supporting DALY-BMS&nbsp; and JK-BMS</div>
+<div>+ BMS data polling and MQTT publish time now selectable from 5s to 300s</div>
+<div>&nbsp; NOTE: Suggested settings are : BMS polling time 60s - MQTT Publish time 60s</div>
+<div>&nbsp; NOTE: JK BMS needs only 0.35s for a full data request WHILE DALY needs about 0.9s ! don't stress this poor machine too much ;-)</div>
+<div>+ Static IP settings on config page</div>
+<div>+ Backup file are automatically removed</div>
+<div>+ JSON MQTT *beta*&nbsp;</div>
+<div>&nbsp;</div>
+<div>1.10.0 Internal release</div>
+<div>+ 600% speed up web pages with 24h log</div>
+<div>&nbsp;</div>
+<div>1.9.0 released on dec 29th 2023&nbsp;</div>
+<div>+ Added possibility to Select Secure MQTT TLS or Insecure via WebPage . Not Secure tested with Mosquitto</div>
+<div>NOTE !!! a reboot is needed everytime the TLS checkmark changes. May be fixed on next release</div>
+<div>* Fix a problem on getting current battery package Watt</div>
+<div>* Fix memory leackage during file upload</div>
+<div>+ Virtual UART Tunnel for remote PCMaster - Inactivity timeout increased to 90s (was 60 )</div>
+<div>+ possibility to Clock Sync from web page - needed in case of AP (stand alone) mode without internet connection</div>
+<div>+ lightTime delta duration vs previous day :-)</div>
+<div>+ when in AP mode - user can change default AP password "123456789" from "AT+PWD=" command or from web page</div>
+<div>&nbsp; AP password will be the same used for Station mode.&nbsp;</div>
+<div>+ AT+WMODE command automatically triggers a SAVE &amp; REBOOT</div>
+<div>&nbsp;</div>
+<div>1.8.0&nbsp; released on dec 21th 2023</div>
+<div>+ auto recovery of current graph in case of reboot or missing energy .</div>
+<div>&nbsp; last availble "today" battery samples are taken and load in memory.</div>
+<div>* fixed missing BMS get samples</div>
+<div>&nbsp;</div>
+<div>1.7.0 release on dec 11th 2023</div>
+<div>+ 6 months daily storage of Batteries + SOC- rolling -&gt; old files are removed</div>
+<div>&nbsp; + list of "batt_" files on SETTINGS-&gt;FILE CONFIG page&nbsp;</div>
+<div>&nbsp; &nbsp; + download as .csv</div>
+<div>&nbsp; &nbsp; + show as html graph</div>
+<div>+ auto export of each battery+SOC every 20minutes</div>
+<div>+ Access Point mode for stand alone installation: SSID dalyBMSWiFi.com - PWD 123456789&nbsp; def.IP : 192.168.0.1</div>
+<div>&nbsp; + AT+WMODE?</div>
+<div>&nbsp; + AT+WMODE=STA or AP&nbsp; ( + AT+SAR )</div>
+<div>+ MQTT is disconnected between publish to avoid memory issues</div>
+<div>&nbsp;</div>
+<div>1.7.0 KNOWN Issues/bugs</div>
+<div>1- in AP mode there's no way to set the current time -&gt; fixing ready on rel 1.8.0</div>
+<div>2- MQTT Connection Status on SETTINGS-&gt;MQTT is refreshed after 1 minute from the set -&gt; fixing on rel 1.8.0</div>
+<div>&nbsp;</div>
+<div>1.6.0 release date nov 19th 2023</div>
+<div>+ Virtual Console to remotely access to BMS via DalyBmsMonitorV1.1.5</div>
+<div>+ Added Virtual Console enable button on MISC page. Default port : 6790</div>
+<div>&nbsp; Virtual com used : https://www.hw-group.com/software/hw-vsp3-virtual-serial-port -&gt; HW VSP3 Single v3.1.2</div>
+<div>&nbsp;</div>
+<div>1.5.0 release date sept 29th 2023</div>
+<div>+ Fixed Graph dates</div>
+<div>+ html layout pages changed with top TAB selection</div>
+<div>+ Graph length depends on configuration to save memory</div>
+<div>+ Added console active on the first 15s to support out of the box config:&nbsp; 57600,8,N,1</div>
+<div>
+<table style="border-collapse: collapse; width: 50%; height: 270px;" border="1">
+<tbody>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">Command</td>
+<td style="width: 50%; height: 18px;">Description</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+SCAN?</td>
+<td style="width: 50%; height: 18px;">Scan AP in the range</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+SSID?</td>
+<td style="width: 50%; height: 18px;">GET AP's SSID&nbsp;</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+SSID=myAPSSID</td>
+<td style="width: 50%; height: 18px;">SET AP SSID</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+PWD?</td>
+<td style="width: 50%; height: 18px;">GET AP's passphrase</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+PWD=myAPPasspherase</td>
+<td style="width: 50%; height: 18px;">SET AP passpharse</td>
+</tr>
+<tr style="height: 36px;">
+<td style="width: 50%; height: 36px;">AT+STAT?</td>
+<td style="width: 50%; height: 36px;">GET WiFi Connection Status + IP and MAC</td>
+</tr>
+<tr style="height: 36px;">
+<td style="width: 50%; height: 36px;">AT+SYSUSR=systemUser</td>
+<td style="width: 50%; height: 36px;">SET Protected Pages username default="<strong>admin</strong>"</td>
+</tr>
+<tr style="height: 36px;">
+<td style="width: 50%; height: 36px;">AT+SYSPWD=systemPassword</td>
+<td style="width: 50%; height: 36px;">SET Protected Pages password default="admin!"</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+SAR</td>
+<td style="width: 50%; height: 18px;">COMMAND :&nbsp; Save and Reboot</td>
+</tr>
+<tr style="height: 18px;">
+<td style="width: 50%; height: 18px;">AT+FACTORY</td>
+<td style="width: 50%; height: 18px;">COMMAND : Restore to factory defaults</td>
+</tr>
+<tr style="height: 36px;">
+<td style="width: 50%; height: 36px;">AT+CMD</td>
+<td style="width: 50%; height: 36px;">COMMAND : List all the available commands</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>&nbsp;</div>
+<div>&nbsp; <strong>NOTE</strong>: each AT command MUST end with 0x0D 0x0A ( &lt;CR&gt;&lt;LF&gt; )</div>
+<div>+ MQTT configuration exported on config page</div>
+<div>+ add FILE MANAGER webpage to download/upload the config.txt file</div>
+<div>&nbsp;</div>
+<div>1.4.0 release date Aug 1st 2023</div>
+<div>+ added watch-dog ping to default gateway, reset after failurs</div>
+<div>&nbsp;</div>
+<div>1.0.0 release date July 3rd 2022</div>

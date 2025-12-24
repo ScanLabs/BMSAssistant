@@ -1,0 +1,97 @@
+>D
+MaxH=0
+MaxM=0
+MaxS=0
+Dh=0
+Ch=0
+Fa=0
+Pd=0
+>T
+MaxH=SMA#Mh
+MaxM=SMA#Mm
+MaxS=SMA#SM
+Dh=SMA#DH
+Ch=SMA#CH
+Fa=SMA#FA
+Pd=SMA#Pd
+>B
+smlj=1
+tper=10
+=>sensor53 r
+=>sensor53 d0
+
+#rsub
+rapp ,"SMA1":{
+rapp "Pd":%s(0.0Pd)%,
+rapp "MST":"%s(0.0MaxS)% %% @ %s(0.0MaxH)%:%s(0.0MaxM)%",
+if Dh==1.00 
+then
+  rapp "Dh":"ON",
+else 
+  rapp "Dh":"OFF",
+endif
+if Ch==1.00 
+then 
+  rapp "Ch":"ON",
+else 
+  rapp "Ch":"OFF",
+endif
+if FA==1.00 
+then 
+  rapp "Fa":"1",
+else 
+  rapp "Fa":"0",
+endif
+
+rapp "Rt":%s(0.0tper)%}
+
+>J
+; send to mqtt
+; call json subroutine
+%=#rsub
+
+
+>M 1
++1,[192.168.2.234],m,0,502,SMA,0,100,r01030064003A
+1,0103xxUUuu@i0:1,SOC,%%,SOC,0
+1,0103xxx8UUuu@i0:1,mV Delta,mV,Dv,0
+1,0103xxx10UUuu@i0:1,mV Average,mV,Av,0
+1,0103xxx16ffffffff@i0:1,Tmp,C,T,1
+
+1,0103xxx20ffffffff@i0:1,Vt,V,Vt,2
+1,0103xxx24ffffffff@i0:1,Am,A,Am,2
+1,0103xxx28ffffffff@i0:1,W,W,W,0
+
+1,0103xxx34UUuu@i0:1,DMOS,,DH,0
+1,0103xxx36UUuu@i0:1,CMOS,,CH,0
+
+;1,0103xxx40UUuu@i0:1,Vb1,mV,v1mv,0  
+;1,0103xxx42UUuu@i0:1,Vb2,mV,v2mv,0  
+;1,0103xxx44UUuu@i0:1,Vb3,mV,v3mv,0  
+;1,0103xxx46UUuu@i0:1,Vb4,mV,v4mv,0  
+;1,0103xxx48UUuu@i0:1,Vb5,mV,v5mv,0 
+;1,0103xxx50UUuu@i0:1,Vb6,mV,v6mv,0  
+;1,0103xxx52UUuu@i0:1,Vb7,mV,v7mv,0  
+;1,0103xxx54UUuu@i0:1,Vb8,mV,v8mv,0  
+;1,0103xxx56UUuu@i0:1,Vb9,mV,v9mv,0  
+;1,0103xxx58UUuu@i0:1,Vb10,mV,v10mv,0  
+;1,0103xxx60UUuu@i0:1,Vb11,mV,v11mv,0  
+;1,0103xxx62UUuu@i0:1,Vb12,mV,v12mv,0  
+;1,0103xxx64UUuu@i0:1,Vb13,mV,v13mv,0  
+;1,0103xxx66UUuu@i0:1,Vb14,mV,v14mv,0  
+;1,0103xxx68UUuu@i0:1,Vb15,mV,v15mv,0 
+;1,0103xxx70UUuu@i0:1,Vb16,mV,v16mv,0  
+
+1,0103xxx80UUuu@i0:1,Num,,Bt,0  
+1,0103xxx82UUuu@i0:1,Max Soc,%%,SM,0  
+1,0103xxx84UUuu@i0:1,Max hh,h,Mh,0  
+1,0103xxx86UUuu@i0:1,Max mm,m,Mm,0 
+1,0103xxx88UUuu@i0:1,BCap,Ah,Ca,0
+1,0103xxx90UUuu@i0:1,Fail,,FA,0
+;1,0103xxx100UUuu@i0:1,Hp,B,Hp,0 
+1,0103xxx102UUuu@i0:1,CN,,cn,0  
+1,0103xxx104UUuu@i0:1,TZ,,Tz,0
+1,0103xxx106UUuu@i0:1,Dashboard,,Pd,0
+1,0103xxx108U32@i0:1,Display1,,Al1,0
+1,0103xxx112U32@i0:1,Display2,,Al2,0
+#

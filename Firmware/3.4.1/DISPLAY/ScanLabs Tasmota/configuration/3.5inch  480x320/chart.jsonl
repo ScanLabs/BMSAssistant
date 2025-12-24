@@ -1,0 +1,9 @@
+{"page":100,"id":0,"bg_color":"#ad631f","text_color":"white"}
+{"page":100,"id":1,"obj":"chart","x":8,"y":35,"w":465,"h":240,"bg_color":"#FFFFFF","border_color":"#FFFFFF","bg_opa":220,"border_color":"#EE9900","border_width":0,"radius":0,"pad_all":2,"y_min":-1500,"y_max":1500,"point_count":10,"height10":0,"width10":0,"v_div_line_count":0,"h_div_line_count":5,"line_color":"#555555","line_width30":2}
+{"page":100,"id":2,"obj":"scale","x":8,"y":265,"w":465,"h":20,"min":8,"max":16,"total_tick_count":25,"major_tick_every":4,"label_show":true,"line_color":"#FFFF88","line_color10":"#00FF00","line_color30":"#00FF00","line_width":2,"line_width10":2,"line_width30":2,"length10":5,"length30":3,"pad_top":10,"text_font":"seg7-8"}
+{"page":100,"id":3,"obj":"scale","x":8,"y":35,"w":0,"h":240,"min":0,"max":0,"mode":2,"total_tick_count":21,"major_tick_every":5,"label_show":false,"line_color":"#4444FF","line_color10":"#4444FF","line_color30":"#AAAAFF","line_width":2,"line_width10":2,"line_width30":2,"length10":5,"length30":3,"bg_color":"#607D8B","bg_opa":127,"radius":8,"pad_ver":12}
+{"page":100,"id":4,"obj":"label","text":"100%","text_font":"montserrat-20","text_color":"black","x":420,"y":250,"w":60,"h":25, "bg_opa":0}
+{"page":100,"id":5,"obj":"label","text":"0W","text_font":"montserrat-14","text_color":"black","x":15,"y":40,"w":50,"h":25, "bg_opa":0}
+{"page":100,"id":6,"obj":"label","text":"0W","text_font":"montserrat-14","text_color":"black","x":15,"y":255,"w":50,"h":25, "bg_opa":0}
+$$$
+

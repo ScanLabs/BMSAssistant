@@ -1,0 +1,51 @@
+{"page":$#PID#$,"id":0,"bg_color":"#ad631f","text_color":"white"}
+{"page":$#PID#$,"comment":"Scale"}
+{"page":$#PID#$,"id":1,"obj":"scale","x":85,"y":40,"w":150,"h":150,"min":0,"max":100,"mode":8,"bg_opa":255,"bg_color":"#ad631f","radius":32767,"clip_corner":true,"label_show":false,"total_tick_count":25,"major_tick_every":24,"length10":20,"length30":20,"angle_range":240,"rotation":150,"arc_color":"#ad631f","line_color10":"#FFFFFF","line_color30":"#FFFFFF","arc_width":0,"line_width10":5,"line_width30":5,"length10":10,"length30":5}
+{"page":$#PID#$,"comment":"Line Gauge"} 
+{"page":$#PID#$,"id":2,"obj":"line","x":85,"y":40,"w":150,"h":150,"line_color":"#0000FF","line_width":5,"points":[[118,100],[140,113]]}
+{"page":$#PID#$,"id":4,"obj":"line","x":85,"y":40,"w":150,"h":150,"line_color":"#00FF00","line_width":10,"points":[[118,100],[140,113]]}
+{"page":$#PID#$,"comment":"SOC Inside"} 
+{"page":$#PID#$,"id":3,"obj":"label","text":"100","align":1,"text_font":"seg7-36","text_color":"white","x":115,"y":95,"w":90,"h":45, "bg_opa":255, "bg_color":"#ad631f"}
+{"page":$#PID#$,"id":5,"obj":"label","text":"100% @ 23:59","text_font":"montserrat-14","text_color":"white","x":100,"y":160,"w":120,"h":25, "bg_opa":0,"align":1}
+{"page":$#PID#$,"comment":"SUM V "}
+{"page":$#PID#$,"id":16,"obj":"label","text":"Vt:","text_font":"montserrat-14","text_color":"white","x":5,"y":50,"w":20,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":18,"obj":"label","text":"99.9","text_font":"montserrat-20","text_color":"#00FFFF","x":30,"y":46,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":20,"obj":"label","text":"V","text_font":"montserrat-10","text_color":"#00FFFF","x":72,"y":46,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"CURRENT "}
+{"page":$#PID#$,"id":26,"obj":"label","text":"A:","text_font":"montserrat-14","text_color":"white","x":5,"y":80,"w":20,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":28,"obj":"label","text":"-9999","text_font":"montserrat-20","text_color":"#00FFFF","x":20,"y":76,"w":80,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":30,"obj":"label","text":"A","text_font":"montserrat-10","text_color":"#00FFFF","x":78,"y":76,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"WATT "}
+{"page":$#PID#$,"id":36,"obj":"label","text":"W:","text_font":"montserrat-14","text_color":"white","x":5,"y":110,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":38,"obj":"label","text":"9999","text_font":"montserrat-20","text_color":"#00FFFF","x":25,"y":106,"w":75,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":40,"obj":"label","text":"W","text_font":"montserrat-10","text_color":"#00FFFF","x":73,"y":106,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"Capacity "}
+{"page":$#PID#$,"id":56,"obj":"label","text":"Cp:","text_font":"montserrat-14","text_color":"white","x":5,"y":140,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":58,"obj":"label","text":"200","text_font":"montserrat-20","text_color":"#00FFFF","x":30,"y":136,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":60,"obj":"label","text":"Ah","text_font":"montserrat-10","text_color":"#00FFFF","x":68,"y":136,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"Ch MOS "}
+{"page":$#PID#$,"id":46,"obj":"label","text":"CM:","text_font":"montserrat-14","text_color":"white","x":5,"y":170,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":48,"obj":"label","text":"ON","text_font":"montserrat-20","text_color":"#00FFFF","x":40,"y":166,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"AVERAGE V "}
+{"page":$#PID#$,"id":76,"obj":"label","text":"Av:","text_font":"montserrat-14","text_color":"white","x":230,"y":50,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":78,"obj":"label","text":"9999","text_font":"montserrat-20","text_color":"#00FFFF","x":252,"y":46,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":80,"obj":"label","text":"mV","text_font":"montserrat-10","text_color":"#00FFFF","x":300,"y":46,"w":25,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"DELTA V "}
+{"page":$#PID#$,"id":86,"obj":"label","text":"D:","text_font":"montserrat-14","text_color":"white","x":240,"y":80,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":88,"obj":"label","text":"999","text_font":"montserrat-20","text_color":"#00FFFF","x":256,"y":76,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":90,"obj":"label","text":"mV","text_font":"montserrat-10","text_color":"#00FFFF","x":292,"y":76,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"TEMP "}
+{"page":$#PID#$,"id":96,"obj":"label","text":"T:","text_font":"montserrat-14","text_color":"white","x":240,"y":110,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":98,"obj":"label","text":"99","text_font":"montserrat-20","text_color":"#00FFFF","x":256,"y":106,"w":40,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":100,"obj":"label","text":"°C","text_font":"montserrat-10","text_color":"#00FFFF","x":280,"y":106,"w":70,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"Batt "}
+{"page":$#PID#$,"id":116,"obj":"label","text":"Batt:","text_font":"montserrat-14","text_color":"white","x":240,"y":140,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":118,"obj":"label","text":"16","text_font":"montserrat-20","text_color":"#00FFFF","x":280,"y":136,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"Dis MOS "}
+{"page":$#PID#$,"id":106,"obj":"label","text":"DM:","text_font":"montserrat-14","text_color":"white","x":240,"y":170,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"id":108,"obj":"label","text":"ON","text_font":"montserrat-20","text_color":"#00FFFF","x":275,"y":166,"w":50,"h":25, "bg_opa":0}
+{"page":$#PID#$,"comment":"LED "}
+{"page":$#PID#$,"id":140,"obj":"led","x":140,"y":145,"w":40,"h":5,"bg_color":"#00FF00","border_color":"#00FF00","color":"#00FF00"}
+{"page":$#PID#$,"comment":"DASHBOARD NAME"}
+{"page":$#PID#$,"id":150,"obj":"label","text":"","text_font":"montserrat-20","text_color":"#FFFFFF","align":1,"x":95,"y":195,"w":130,"h":25, "bg_opa":0}
+$$$

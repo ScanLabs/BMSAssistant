@@ -1,0 +1,1 @@
+Versions 5.x Works ONLY with ScanLabs dongle Fw >= 3.3.0 

@@ -1,0 +1,84 @@
+{"page":0,"comment":"---------- Version 2.0 colors are BBGGRR ----------"}
+{"id":0,"text_color":"#ffffff"}
+{"id":239,"obj":"btn","x":70,"y":95,"w":180,"h":50,"bg_color":"#4f4f4f","text_color":"#44FFFF","radius":10,"text_font":"montserrat-20","text":"","border_width":2,"border_side":15,"border_color":"#44FFFF","border_opa":0,"text_opa":0,"bg_opa":0}
+
+{"id":90,"obj":"flex","x":0,"y":0,"w%":100,"h":24,"bg_color":"#0000D0","bg_opa":255,"radius":0,"border_side":1,"border_width":1,"border_color":"#0000D0","text_color":"#FFFFFF"}
+  {"id":91,"obj":"label","parentid":90,"x":0,"y":0,"w":100,"h%":100,"long_mode":3,"text":"SmartBMS.it","text_font":"montserrat-20","flex_grow":1}
+  {"id":92,"obj":"fixed","parentid":90,"w":102,"text_color":"#FFFFFF"}
+    {"id":95,"parentid":92,"comment":"-- Clock --","obj":"lv_clock","x":0,"y":3,"w":55,"h":16,"radius":0,"border_side":0}
+    {"id":97,"parentid":92,"comment":"-- Wifi indicator --","obj":"lv_wifi_arcs","x":73,"y":0,"w":29,"h":20,"radius":0,"border_side":0,"bg_color":"#0000D0","line_color":"#FFFFFF"}
+
+{"comment":"---------- Bottom buttons - prev/home/next ----------"}
+{"id":101,"obj":"btn","x":0,"y":220,"w":50,"h":20,"action":"prev","bg_color":"#4f4f4f","text_color":"#FFFFFF","radius":5,"text":"\uF053","text_font":"montserrat-14","border_width":1,"border_side":15,"border_color":"#FFFFFF","border_opa":210}
+{"id":103,"obj":"btn","x":270,"y":220,"w":50,"h":20,"action":"next","bg_color":"#4f4f4f","text_color":"#FFFFFF","radius":5,"text":"\uF054","text_font":"montserrat-14","border_width":1,"border_side":15,"border_color":"#FFFFFF","border_opa":210}
+
+{"id":110,"obj":"label","text":"1-1","align":1,"text_font":"seg7-14","text_color":"white","x":150,"y":4,"w":50,"h":15, "bg_opa":255, "bg_color":"#0000D0"}
+
+{"comment":"TIME BAR "}
+{"id":105,"obj":"bar","x":50,"y":230,"w":220,"h":10,"val":100,"bg_color":"#AD631F","bg_grad_dir":0, "border_width":0, "radius10":0, "radius":0, "bg_color10":"#F2F2FF"}
+
+{"page":1,"comment":"---------- Page 1 Obj ----------"}
+{"id":0,"bg_color":"#ad631f","text_color":"white"}
+
+{"comment":"Scale"}
+{"id":1,"obj":"scale","x":85,"y":40,"w":150,"h":150,"min":0,"max":100,"mode":8,"bg_opa":255,"bg_color":"#ad631f","radius":32767,"clip_corner":true,"label_show":false,"total_tick_count":25,"major_tick_every":24,"length10":20,"length30":20,"angle_range":240,"rotation":150,"arc_color":"#ad631f","line_color10":"#FFFFFF","line_color30":"#FFFFFF","arc_width":0,"line_width10":5,"line_width30":5,"length10":10,"length30":5}
+{"comment":"Line Gauge"} 
+{"id":2,"obj":"line","x":85,"y":40,"w":150,"h":150,"line_color":"#0000FF","line_width":5,"points":[[118,100],[140,113]]}
+{"id":4,"obj":"line","x":85,"y":40,"w":150,"h":150,"line_color":"#00FF00","line_width":10,"points":[[118,100],[140,113]]}
+
+{"comment":"SOC %"} 
+{"id":3,"obj":"label","text":"100","align":1,"text_font":"seg7-36","text_color":"white","x":115,"y":95,"w":90,"h":45, "bg_opa":255, "bg_color":"#ad631f"}
+{"id":5,"obj":"label","text":"100% @ 23:59","text_font":"montserrat-14","text_color":"white","x":95,"y":160,"w":130,"h":25, "bg_opa":0,"align":1}
+
+{"comment":"PACK V"}
+{"id":16,"obj":"label","text":"Vt:","text_font":"montserrat-14","text_color":"white","x":5,"y":50,"w":20,"h":25, "bg_opa":0}
+{"id":18,"obj":"label","text":"99.9","text_font":"montserrat-20","text_color":"#00FFFF","x":30,"y":46,"w":70,"h":25, "bg_opa":0}
+{"id":20,"obj":"label","text":"V","text_font":"montserrat-10","text_color":"#00FFFF","x":72,"y":46,"w":70,"h":25, "bg_opa":0}
+
+{"comment":"CURRENT A"}
+{"id":26,"obj":"label","text":"A:","text_font":"montserrat-14","text_color":"white","x":5,"y":80,"w":20,"h":25, "bg_opa":0}
+{"id":28,"obj":"label","text":"-9999","text_font":"montserrat-20","text_color":"#00FFFF","x":20,"y":76,"w":80,"h":25, "bg_opa":0}
+{"id":30,"obj":"label","text":"A","text_font":"montserrat-10","text_color":"#00FFFF","x":78,"y":76,"w":70,"h":25, "bg_opa":0}
+
+{"comment":"WATT W"}
+{"id":36,"obj":"label","text":"W:","text_font":"montserrat-14","text_color":"white","x":5,"y":110,"w":50,"h":25, "bg_opa":0}
+{"id":38,"obj":"label","text":"9999","text_font":"montserrat-20","text_color":"#00FFFF","x":25,"y":106,"w":75,"h":25, "bg_opa":0}
+{"id":40,"obj":"label","text":"W","text_font":"montserrat-10","text_color":"#00FFFF","x":73,"y":106,"w":70,"h":25, "bg_opa":0}
+
+{"comment":"Capacity Ah"}
+{"id":56,"obj":"label","text":"Cp:","text_font":"montserrat-14","text_color":"white","x":5,"y":140,"w":50,"h":25, "bg_opa":0}
+{"id":58,"obj":"label","text":"200","text_font":"montserrat-20","text_color":"#00FFFF","x":30,"y":136,"w":70,"h":25, "bg_opa":0}
+{"id":60,"obj":"label","text":"Ah","text_font":"montserrat-10","text_color":"#00FFFF","x":68,"y":136,"w":70,"h":25, "bg_opa":0}
+
+{"comment":"Ch MOS"}
+{"id":46,"obj":"label","text":"CM:","text_font":"montserrat-14","text_color":"white","x":5,"y":170,"w":50,"h":25, "bg_opa":0}
+{"id":48,"obj":"label","text":"ON","text_font":"montserrat-20","text_color":"#00FFFF","x":40,"y":166,"w":50,"h":25, "bg_opa":0}
+
+{"comment":"AVERAGE V"}
+{"id":76,"obj":"label","text":"Av:","text_font":"montserrat-14","text_color":"white","x":230,"y":50,"w":50,"h":25, "bg_opa":0}
+{"id":78,"obj":"label","text":"9999","text_font":"montserrat-20","text_color":"#00FFFF","x":252,"y":46,"w":70,"h":25, "bg_opa":0}
+{"id":80,"obj":"label","text":"mV","text_font":"montserrat-10","text_color":"#00FFFF","x":300,"y":46,"w":25,"h":25, "bg_opa":0}
+
+{"comment":"DELTA V"}
+{"id":86,"obj":"label","text":"D:","text_font":"montserrat-14","text_color":"white","x":240,"y":80,"w":50,"h":25, "bg_opa":0}
+{"id":88,"obj":"label","text":"999","text_font":"montserrat-20","text_color":"#00FFFF","x":256,"y":76,"w":70,"h":25, "bg_opa":0}
+{"id":90,"obj":"label","text":"mV","text_font":"montserrat-10","text_color":"#00FFFF","x":292,"y":76,"w":70,"h":25, "bg_opa":0}
+
+{"comment":"TEMP"}
+{"id":96,"obj":"label","text":"T:","text_font":"montserrat-14","text_color":"white","x":240,"y":110,"w":50,"h":25, "bg_opa":0}
+{"id":98,"obj":"label","text":"99","text_font":"montserrat-20","text_color":"#00FFFF","x":256,"y":106,"w":40,"h":25, "bg_opa":0}
+{"id":100,"obj":"label","text":"°C","text_font":"montserrat-10","text_color":"#00FFFF","x":280,"y":106,"w":70,"h":25, "bg_opa":0}
+
+{"comment":"Batt #"}
+{"id":116,"obj":"label","text":"Batt:","text_font":"montserrat-14","text_color":"white","x":240,"y":140,"w":50,"h":25, "bg_opa":0}
+{"id":118,"obj":"label","text":"99","text_font":"montserrat-20","text_color":"#00FFFF","x":280,"y":136,"w":50,"h":25, "bg_opa":0}
+
+{"comment":"Dis MOS"}
+{"id":106,"obj":"label","text":"DM:","text_font":"montserrat-14","text_color":"white","x":240,"y":170,"w":50,"h":25, "bg_opa":0}
+{"id":108,"obj":"label","text":"ON","text_font":"montserrat-20","text_color":"#00FFFF","x":275,"y":166,"w":50,"h":25, "bg_opa":0}
+
+{"comment":"ALARM"}
+{"id":140,"obj":"led","x":140,"y":145,"w":40,"h":5,"bg_color":"#00FF00","border_color":"#00FF00","color":"#00FF00"}
+
+{"comment":"DASHBOARD NAME"}
+{"id":150,"obj":"label","text":"","text_font":"montserrat-20","text_color":"#FFFFFF","align":1,"x":95,"y":195,"w":130,"h":25, "bg_opa":0}
