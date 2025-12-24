@@ -1,5 +1,8 @@
-# BMSAssistant
+# ScanLabs Smart BMS data Extractor aka BMSAssistant
 DALY - JK - 100Balance - DALY Clones such as Hi - ALL in ONE Assistant - SMART BMS Data Extractor
+
+# BMS data Extractor is Based on ESP8266 NodeMCU - ultra low cost 2$ 
+# Remote Color Display (optional) based on ESP32 Yellow Board 2.8" or 3.5" and Tasmota or OpenHasp projects
 
 # COMPATIBILITY LIST:
 -  **DALY** – NEWER & FORMER Models with UART(1) Interface ( RS232 )
@@ -9,7 +12,7 @@ DALY - JK - 100Balance - DALY Clones such as Hi - ALL in ONE Assistant - SMART B
     -  JK-BD6AxxS-10P, JK-BD6AxxS-12P, JK-BD6AxxS-15P, JK-B1AxxS-15P , JK-B2AxxS-15P, JK-B2AxxS-20P
 
 # Feauture set :
-- **BUILD YOURSELF** full guide available at http://www.smartbms.it
+- **BUILD YOURSELF** full guide available on /Documents or at http://www.smartbms.it
 -	CONFIGURE in 2 minutes !
     -	Dongle starts as Access Point – you connect via WiFi and configure
     -	Simple AT serial command interface for first provisioning available as well
