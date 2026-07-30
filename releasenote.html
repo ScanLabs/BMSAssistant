@@ -1,11 +1,97 @@
+<meta charset="UTF-8">
 <div><strong>DALYBMSWIFI.com or SMARTBMS.it for instructions</strong></div>
 <div>&nbsp;</div>
 <div>REMEMBER ! Default html USERNAME: <b>admin</b> and PASSWORD: <b>admin!</b></div>
-<div>REMEMBER ! Default Host Name is <b>SmartBMS</b>  (note: case insensitive)
 <div>&nbsp;</div>
-<div>SUPPORT on <strong><a href="https://discord.com/invite/AypajkSGgQ">DISCORD</a></strong></div>
+<div>SUPPORT on BOTH <strong><a href="https://discord.com/invite/AypajkSGgQ">DISCORD</a></strong> 
+	and onsite <strong><a href="https://dalybmswifi.com/forum">FORUM</a></strong></div><br>
+<div>Step By Step DIY & Configuration Manual @ <strong><a href="https://www.dalybmswifi.com/build-it/">MANUAL</a></strong></div>
 <div>&nbsp;</div>
-<div><b>3.4.2 released on 22 Dec 2025</b></div>
+<div><b>3.6.1 released on 14 July 2026</b></div>
+<div>&nbsp;</div>
+<div><b>HOME ASSISTANT DISCOVERY</b></div>
+<div>&nbsp;&nbsp;Home Assistant Discovery now disabled by default</div>
+<div><b>FIXES</b></div>
+<div>&nbsp;&nbsp;Fix: Safari do not open the welcome page (websocket)</div>
+<div>&nbsp;&nbsp;Fix: bms DeviceID not correctly migrated from 3.5.x to 3.6.x</div>
+<div>&nbsp;&nbsp;Fix: added new ModBus Server Register Table</div>
+<div>&nbsp;</div>
+<div>3.6.0 released on 11 July 2026</div>
+<div>&nbsp;</div>
+<div><b>JK‑PBx CAN BUS</b></div>
+<div>&nbsp;&nbsp;Full support for the CAN BUS protocol on JK‑PBx</div>
+<div><b>DALY CAN BUS</b></div>
+<div>&nbsp;&nbsp;CAN BUS support for DALY (HW + protocol) &rarr; Postponed to next releases</div>
+<div><b>OLED RAM OPTIMIZED</b></div>
+<div>&nbsp;&nbsp;New RAM‑optimized OLED version &rarr; becomes the standard choice for the Smart Data Extractor dongle DIY</div>
+<div>&nbsp;&nbsp;SEE IT IN ACTION ON YOUTUBE</div>
+<div><b>FW UPGRADE</b></div>
+<div>&nbsp;&nbsp;Optimized the firmware upgrade process via webpages</div>
+<div><b>mDNS DISCOVERY</b></div>
+<div>&nbsp;&nbsp;Improved mDNS system for dongle discovery through Network Scanning App</div>
+<div><b>WEBPAGES</b></div>
+<div>&nbsp;&nbsp;Multiple fixes and enhancements to the webpages</div>
+<div><b>MBUS SERVER</b></div>
+<div>&nbsp;&nbsp;New BMS parameters now exposed via MBUS Server</div>
+<div><b>MQTT EXPORT</b></div>
+<div>&nbsp;&nbsp;New set of values now exportable via MQTT (refer to the Manual for details )</div>
+<div><b>JK‑PBx BMS‑ID</b></div>
+<div>&nbsp;&nbsp;Fix: Previosly JK-PBx BMS-ID=1 was hard-set on fw . Now is fully customizable.
+<div>&nbsp;&nbsp;Introduced graphical configuration of the BMS‑ID on Settings->MISC (dip‑switches view)</div>
+<div><b>HOME ASSISTANT DISCOVERY</b></div>
+<div>&nbsp;&nbsp;Home Assistant Discovery mode now fully supported</div>
+<div>&nbsp;&nbsp;HA automatically discovers all parameters exposed by the dongle via MQTT</div>
+<div><b>FIXES</b></div>
+<div>&nbsp;&nbsp;Fix: Race condition with MQTT MOS Management causing unpredictable publish timing</div>
+<div>&nbsp;&nbsp;Fix: MQTT Subscriber &rarr; BALANCE MOS now working correctly</div>
+<div>&nbsp;&nbsp;Fix: MQTT Subscriber &rarr; multiple MOS Switch status updates now handled properly</div>
+<br><br>
+<div>3.5.2 released on 25 Apr 2026</div>
+<div>&nbsp;</div>
+<div><b>MQTT SUBSCRIBER</b></div>
+<div>&nbsp;&nbsp;Rewrote the full MQTT subscribing Procedure it make it safier and more efficient</div>
+<div><b>MQTT SWITCH</b></div>
+<div>&nbsp;&nbsp;Added BALANCE SWITCH from MQTT</div>
+<div><b>IOTMQTT PANEL</b></div>
+<div>&nbsp;&nbsp;New IoTMQTT Panel template - ADD Balance Switch and Virtual UART setup</div>
+<div><b>VIRTUAL UART</b></div>
+<div>&nbsp;&nbsp;Now Virtual UART works as MASTER or CLIENT</div>
+<div>&nbsp;&nbsp;as MASTER - the remote Virtual UART end point connect to the dongle IP:PORT</div>
+<div>&nbsp;&nbsp;as CLIENT - the dongle connets to remote UART TUNNEL SERVER via it's own IP/HOSTNAME:PORT</div>
+<div><b>NEW BATTERY MONITOR</b></div>
+<div>&nbsp;&nbsp;MONITOR TAB now logs at the BMS Polling pace, the Power, SOC, delta Volt and Vbat</div>
+<br><br>
+<div>3.5.1 released on 08 Mar 2026</div>
+<div><b>CHART BATTERY & MONITOR</b></div>
+<div>&nbsp;Fix Charts not loaded</div>
+<div>&nbsp;added New info exported on Charts: Delta Voltage, MIN-MAX over the series, detailed views</div>
+<div><b>BMS PROTOCOL</b></div>
+<div>&nbsp;Fix JK-Bx reporting wrong remaining battery capacity</div>
+<div><b>MODBUS SERVER</b></div>
+<div>&nbsp;Exporting Vmin and Vmax - offset 6 and 7 UINT16 - see manual v 3.5.1</div><br>
+<div>3.5.0 released on 28 Feb 2026</div>
+<div><b>BMS PROTOCOL</b></div>
+<div>&nbsp;&nbsp;New architecture based on full C++ classes to easily support new protocols</div>
+<div>&nbsp;&nbsp;JK BMS now supports the following protocols:</div>
+<div>&nbsp;&nbsp;-000 – 4G‑GPS Remote Module, Common Protocol V4.2</div>
+<div>&nbsp;&nbsp;-001 – JK BMS RS485 Modbus V1.0</div>
+<div>&nbsp;&nbsp;*NOTE: Protocol 001 is recommended for JK‑PBx users, as it enables JK‑BMS‑MONITOR to work remotely via the Virtual UART feature</div>
+<div><b>WEBPAGES</b></div>
+<div>&nbsp;&nbsp;Restyling and HTML/CSS/JavaScript fixes</div>
+<div>&nbsp;&nbsp;+ Added a new simple method to select plant coordinates</div>
+<div>&nbsp;&nbsp;+ Added a new Settings tab showing weather and solar radiation</div>
+<div><b>CAPTIVE PORTAL</b></div>
+<div>&nbsp;&nbsp;When the dongle is in Factory Mode, it starts as an AP without a password for faster setup</div>
+<div><b>VIRTUAL UART</b></div>
+<div>&nbsp;&nbsp;Completely redesigned Virtual UART engine and web interface</div>
+<div><b>&nbsp;&nbsp;DALY BmsMonitor and JK JK‑BMS‑MONITOR</b> PC software supported</div>
+<div>&nbsp;&nbsp;When Virtual UART is enabled, you can use the PC software to manage the battery pack over the Internet</div>
+<div><b>MQTT</b></div>
+<div>&nbsp;&nbsp;+ Added extra information published via MQTT — see the MQTT page for details</div>
+<div><b>NOTIFICATIONS</b></div>
+<div>&nbsp;&nbsp;+ Overvoltage alarms are no longer sent via push notifications when SOC &gt; 98%</div>
+<br>
+<div>3.4.2 released on 22 Dec 2025</div>
 <div>MQTT</div>
 <div>&nbsp;&nbsp;Even without BMS data communucation an MQTT packet is sent</div>
 <div>&nbsp;&nbsp;{"Status":1,"ts":"12/14/25 08:12:13","cnt":155,"mem":10584}</div>	

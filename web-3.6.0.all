@@ -1,0 +1,3718 @@
+<!--HFILE:debug-rep.html--> 
+<!DOCTYPE HTML><html>
+<head>
+  <title>SmartBMS WiFi</title>    
+  <style>
+body {
+ min-width: 310px;
+ max-width: 1000px;
+ height: 400px;
+ margin: 0 auto;
+ font-family: "Lato", sans-serif;
+}
+h2 {
+ font-family: Arial;
+ font-size: 2.5rem;
+ text-align: center;
+}
+.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{color:#000;display:none;padding:20px;text-align:center}
+.btn-group button {
+  background-color: #04AA6D; 
+  border: 1px solid green; 
+  border-radius: 12px;
+  margin: 4px 2px;
+  color: white; 
+  padding: 10px 24px; 
+  cursor: pointer; 
+  float: left;  
+}
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.btn-group button:not(:last-child) {
+  border-right: none; 
+}
+.btn-group button:hover {
+  background-color: #3e8e41;
+}
+</style> 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<script>
+  function submitMessage() {
+    let stringAdj = document.getElementById("BMSF").value.toUpperCase().replace(/\s+/g, '');
+    document.theForm.inputCommand.value = stringAdj; 
+
+    console.log(document.getElementById("BMSF").value);
+    alert("Message Delivered: " + document.getElementById("BMSF").value );
+
+    setTimeout(function(){ document.location.reload(false); }, 500);   
+  }
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+function populate(){
+  document.getElementById("BMSF").setAttribute('value',document.getElementById("BMSC").value);
+}
+</script>
+<body>
+  <button class="tablink" onclick="window.location.href='/';">Status</button> 
+  <button class="tablink" onclick="window.location.href='/batt';">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph';">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config';" id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade';">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+
+  <div style='margin:15px;'><br><center><b>DEBUG TOOLS</center></b><br>
+  <center>ID %platformMAC%</center><br>
+  <hr><br>
+  <form name="theForm" action="/get" target="hidden-form" onsubmit="submitMessage();">
+    <span title="Send a command to BMS: NOTE HEX format HH">Command to BMS: <input type="text" name="inputCommand" id="BMSF" size="30"></span>
+  <select name="bmsCommands" id="BMSC" onchange="populate()">
+  <option value="">Custom</option>
+  <option value="1d20600f000009a5a">BMS Reset</option>
+  <option value="A580D908010000000000000007">Discharge FET ON-1</option>
+  <option value="d20600a60001bb8a">Discharge FET ON-2</option>
+  <option value="A580D908000000000000000006">Discharge FET OFF-1</option>
+  <option value="d20600a600007a4a">Discharge FET OFF-2</option>
+  <option value="D20600A500014B8A">Charge FET ON</option>
+  <option value="D20600A500008A4A">Charge FET OFF</option>
+</select>
+    <input type="submit" value="Submit">
+  </form><br>
+  <div class="btn-group">
+    <button onclick="window.location.href='config';">BACK to CONFIG</button>
+    <button onclick="document.location.reload(false);">RELOAD</button>
+  </div>
+  <textarea id="dongleLog" name="BMSLogTX" rows="50" cols="132">
+  %BMS_REPEATER_BUFFER_LOG%
+  </textarea>
+  <iframe style="display:none" name="hidden-form"></iframe>
+  <script>
+    populate();
+    openTab('red');
+  </script>
+</body></html><!--FFILE-->
+<!--HFILE:display.html--> 
+<!DOCTYPE HTML><html>
+<head>
+  <title>SmartBMS WiFi</title>    
+  <style>
+body {
+ min-width: 310px;
+ max-width: 1000px;
+ height: 400px;
+ margin: 0 auto;
+ font-family: "Lato", sans-serif;
+}
+.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{color:#000;display:none;padding:20px;text-align:center}
+.btn-group button {
+  background-color: #04AA6D; 
+  border: 1px solid green; 
+  border-radius: 12px;
+  margin: 4px 2px;
+  color: white; 
+  padding: 10px 24px; 
+  cursor: pointer; 
+  float: left; 
+}
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.btn-group button:not(:last-child) {
+  border-right: none; 
+}
+.btn-group button:hover {
+  background-color: #3e8e41;
+}
+#unLicensed {color: red;background-color: transparent;text-decoration:none;}
+</style>  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<script>
+  const  config_json = [  
+0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x77, 0x69, 0x66, 0x69, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 
+0x20, 0x20, 0x20, 0x20, 0x22, 0x73, 0x73, 0x69, 0x64, 0x22, 0x3A, 0x20, 0x22, 0x2A, 0x21, 0x77, 
+0x69, 0x66, 0x69, 0x53, 0x53, 0x49, 0x44, 0x2A, 0x21, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 
+0x20, 0x22, 0x70, 0x61, 0x73, 0x73, 0x22, 0x3A, 0x20, 0x22, 0x2A, 0x21, 0x77, 0x69, 0x66, 0x69, 
+0x50, 0x57, 0x44, 0x2A, 0x21, 0x22, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 
+0x22, 0x77, 0x67, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x76, 0x70, 
+0x6E, 0x69, 0x70, 0x22, 0x3A, 0x20, 0x22, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 
+0x70, 0x72, 0x69, 0x76, 0x6B, 0x65, 0x79, 0x22, 0x3A, 0x20, 0x22, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 
+0x2A, 0x2A, 0x2A, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x68, 0x6F, 0x73, 0x74, 
+0x22, 0x3A, 0x20, 0x22, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x6F, 0x72, 
+0x74, 0x22, 0x3A, 0x20, 0x35, 0x31, 0x38, 0x32, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 
+0x22, 0x70, 0x75, 0x62, 0x6B, 0x65, 0x79, 0x22, 0x3A, 0x20, 0x22, 0x22, 0x0D, 0x0A, 0x20, 0x20, 
+0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x6D, 0x71, 0x74, 0x74, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 
+0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x68, 0x6F, 0x73, 0x74, 0x22, 0x3A, 0x20, 0x22, 0x2A, 0x21, 
+0x6D, 0x71, 0x74, 0x74, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2A, 0x21, 0x22, 0x2C, 0x0D, 0x0A, 
+0x20, 0x20, 0x20, 0x20, 0x22, 0x75, 0x73, 0x65, 0x72, 0x22, 0x3A, 0x20, 0x22, 0x2A, 0x21, 0x6D, 
+0x71, 0x74, 0x74, 0x55, 0x73, 0x65, 0x72, 0x4E, 0x61, 0x6D, 0x65, 0x2A, 0x21, 0x22, 0x2C, 0x0D, 
+0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x61, 0x73, 0x73, 0x22, 0x3A, 0x20, 0x22, 0x2A, 0x21, 
+0x6D, 0x71, 0x74, 0x74, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6F, 0x72, 0x64, 0x2A, 0x21, 0x22, 0x2C, 
+0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x74, 0x6F, 0x70, 0x69, 0x63, 0x22, 0x3A, 0x20, 0x7B, 
+0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x22, 0x6E, 0x6F, 0x64, 0x65, 0x22, 0x3A, 0x20, 
+0x22, 0x68, 0x61, 0x73, 0x70, 0x2F, 0x25, 0x68, 0x6F, 0x73, 0x74, 0x6E, 0x61, 0x6D, 0x65, 0x25, 
+0x2F, 0x25, 0x74, 0x6F, 0x70, 0x69, 0x63, 0x25, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 
+0x20, 0x20, 0x22, 0x67, 0x72, 0x6F, 0x75, 0x70, 0x22, 0x3A, 0x20, 0x22, 0x68, 0x61, 0x73, 0x70, 
+0x2F, 0x70, 0x6C, 0x61, 0x74, 0x65, 0x73, 0x2F, 0x25, 0x74, 0x6F, 0x70, 0x69, 0x63, 0x25, 0x22, 
+0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x22, 0x62, 0x72, 0x6F, 0x61, 0x64, 0x63, 
+0x61, 0x73, 0x74, 0x22, 0x3A, 0x20, 0x22, 0x68, 0x61, 0x73, 0x70, 0x2F, 0x62, 0x72, 0x6F, 0x61, 
+0x64, 0x63, 0x61, 0x73, 0x74, 0x2F, 0x25, 0x74, 0x6F, 0x70, 0x69, 0x63, 0x25, 0x22, 0x2C, 0x0D, 
+0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x22, 0x68, 0x61, 0x73, 0x73, 0x22, 0x3A, 0x20, 0x22, 
+0x68, 0x6F, 0x6D, 0x65, 0x61, 0x73, 0x73, 0x69, 0x73, 0x74, 0x61, 0x6E, 0x74, 0x2F, 0x73, 0x74, 
+0x61, 0x74, 0x75, 0x73, 0x22, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 
+0x20, 0x20, 0x20, 0x22, 0x70, 0x6F, 0x72, 0x74, 0x22, 0x3A, 0x20, 0x2A, 0x21, 0x6D, 0x71, 0x74, 
+0x74, 0x50, 0x6F, 0x72, 0x74, 0x2A, 0x21, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x6E, 
+0x61, 0x6D, 0x65, 0x22, 0x3A, 0x20, 0x22, 0x70, 0x6C, 0x61, 0x74, 0x65, 0x22, 0x0D, 0x0A, 0x20, 
+0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x74, 0x65, 0x6C, 0x6E, 0x65, 0x74, 0x22, 0x3A, 
+0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x65, 0x6E, 0x61, 0x62, 0x6C, 0x65, 0x22, 
+0x3A, 0x20, 0x31, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x6F, 0x72, 0x74, 0x22, 
+0x3A, 0x20, 0x32, 0x33, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x6D, 
+0x64, 0x6E, 0x73, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x65, 0x6E, 
+0x61, 0x62, 0x6C, 0x65, 0x22, 0x3A, 0x20, 0x31, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 
+0x20, 0x20, 0x22, 0x68, 0x74, 0x74, 0x70, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 
+0x20, 0x22, 0x65, 0x6E, 0x61, 0x62, 0x6C, 0x65, 0x22, 0x3A, 0x20, 0x74, 0x72, 0x75, 0x65, 0x2C, 
+0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x6F, 0x72, 0x74, 0x22, 0x3A, 0x20, 0x38, 0x30, 
+0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x75, 0x73, 0x65, 0x72, 0x22, 0x3A, 0x20, 0x22, 
+0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x61, 0x73, 0x73, 0x22, 0x3A, 0x20, 
+0x22, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x22, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 
+0x0D, 0x0A, 0x20, 0x20, 0x22, 0x67, 0x70, 0x69, 0x6F, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 
+0x20, 0x20, 0x20, 0x22, 0x63, 0x6F, 0x6E, 0x66, 0x69, 0x67, 0x22, 0x3A, 0x20, 0x5B, 0x0D, 0x0A, 
+0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
+0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 
+0x20, 0x20, 0x20, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x2C, 
+0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 
+0x20, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x0D, 0x0A, 0x20, 
+0x20, 0x20, 0x20, 0x5D, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x64, 
+0x65, 0x62, 0x75, 0x67, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x61, 
+0x6E, 0x73, 0x69, 0x22, 0x3A, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x62, 
+0x61, 0x75, 0x64, 0x22, 0x3A, 0x20, 0x31, 0x31, 0x35, 0x32, 0x30, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 
+0x20, 0x20, 0x20, 0x22, 0x74, 0x65, 0x6C, 0x65, 0x22, 0x3A, 0x20, 0x33, 0x30, 0x30, 0x2C, 0x0D, 
+0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x68, 0x6F, 0x73, 0x74, 0x22, 0x3A, 0x20, 0x22, 0x22, 0x2C, 
+0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x6F, 0x72, 0x74, 0x22, 0x3A, 0x20, 0x35, 0x31, 
+0x34, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x70, 0x72, 0x6F, 0x74, 0x6F, 0x22, 0x3A, 
+0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x6C, 0x6F, 0x67, 0x22, 0x3A, 0x20, 
+0x30, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x67, 0x75, 0x69, 0x22, 
+0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x69, 0x64, 0x6C, 0x65, 0x31, 0x22, 
+0x3A, 0x20, 0x31, 0x32, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x69, 0x64, 0x6C, 
+0x65, 0x32, 0x22, 0x3A, 0x20, 0x32, 0x34, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 
+0x62, 0x63, 0x6B, 0x6C, 0x22, 0x3A, 0x20, 0x32, 0x31, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 
+0x22, 0x62, 0x63, 0x6B, 0x6C, 0x69, 0x6E, 0x76, 0x22, 0x3A, 0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 
+0x20, 0x20, 0x20, 0x22, 0x72, 0x6F, 0x74, 0x61, 0x74, 0x65, 0x22, 0x3A, 0x20, 0x34, 0x2C, 0x0D, 
+0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x63, 0x75, 0x72, 0x73, 0x6F, 0x72, 0x22, 0x3A, 0x20, 0x30, 
+0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x69, 0x6E, 0x76, 0x65, 0x72, 0x74, 0x22, 0x3A, 
+0x20, 0x30, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x63, 0x61, 0x6C, 0x69, 0x62, 0x72, 
+0x61, 0x74, 0x69, 0x6F, 0x6E, 0x22, 0x3A, 0x20, 0x5B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 
+0x20, 0x33, 0x32, 0x38, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x31, 0x38, 0x30, 
+0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x33, 0x38, 0x33, 0x37, 0x2C, 0x0D, 0x0A, 
+0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x31, 0x37, 0x37, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 
+0x20, 0x20, 0x33, 0x31, 0x31, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x33, 0x37, 
+0x33, 0x34, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x33, 0x38, 0x34, 0x31, 0x2C, 
+0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x33, 0x37, 0x35, 0x30, 0x0D, 0x0A, 0x20, 0x20, 
+0x20, 0x20, 0x5D, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x22, 0x68, 0x61, 
+0x73, 0x70, 0x22, 0x3A, 0x20, 0x7B, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x73, 0x74, 0x61, 
+0x72, 0x74, 0x70, 0x61, 0x67, 0x65, 0x22, 0x3A, 0x20, 0x2A, 0x21, 0x6F, 0x70, 0x65, 0x6E, 0x48, 
+0x61, 0x73, 0x70, 0x50, 0x61, 0x6E, 0x65, 0x6C, 0x49, 0x44, 0x2A, 0x21, 0x2C, 0x0D, 0x0A, 0x20, 
+0x20, 0x20, 0x20, 0x22, 0x73, 0x74, 0x61, 0x72, 0x74, 0x64, 0x69, 0x6D, 0x22, 0x3A, 0x20, 0x32, 
+0x35, 0x35, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x74, 0x68, 0x65, 0x6D, 0x65, 0x22, 
+0x3A, 0x20, 0x32, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 
+0x31, 0x22, 0x3A, 0x20, 0x22, 0x23, 0x30, 0x30, 0x66, 0x66, 0x30, 0x30, 0x22, 0x2C, 0x0D, 0x0A, 
+0x20, 0x20, 0x20, 0x20, 0x22, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x32, 0x22, 0x3A, 0x20, 0x22, 0x23, 
+0x66, 0x66, 0x39, 0x39, 0x36, 0x32, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 0x66, 
+0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x20, 0x22, 0x22, 0x2C, 0x0D, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x22, 
+0x70, 0x61, 0x67, 0x65, 0x73, 0x22, 0x3A, 0x20, 0x22, 0x2F, 0x73, 0x63, 0x61, 0x6E, 0x6C, 0x61, 
+0x62, 0x73, 0x2E, 0x6A, 0x73, 0x6F, 0x6E, 0x6C, 0x22, 0x0D, 0x0A, 0x20, 0x20, 0x7D, 0x0D, 0x0A, 
+0x7D];
+const scanlabs_jsonl = [
+0x7B, 0x22, 0x70, 0x61, 0x67, 0x65, 0x22, 0x3A, 0x2A, 0x21, 0x6F, 0x70, 0x65, 0x6E, 0x48, 0x61, 
+0x73, 0x70, 0x50, 0x61, 0x6E, 0x65, 0x6C, 0x49, 0x44, 0x2A, 0x21, 0x2C, 0x22, 0x63, 0x6F, 0x6D, 
+0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x50, 0x61, 0x67, 0x65, 0x20, 0x2A, 0x21, 0x6F, 0x70, 
+0x65, 0x6E, 0x48, 0x61, 0x73, 0x70, 0x50, 0x61, 0x6E, 0x65, 0x6C, 0x49, 0x44, 0x2A, 0x21, 0x22, 
+0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 
+0x74, 0x65, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x2C, 0x22, 0x6F, 0x62, 
+0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x69, 0x6E, 0x65, 0x6D, 0x65, 0x74, 0x65, 0x72, 0x22, 0x2C, 0x22, 
+0x78, 0x22, 0x3A, 0x37, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x33, 0x30, 0x2C, 0x22, 0x77, 0x22, 
+0x3A, 0x31, 0x38, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x31, 0x38, 0x30, 0x2C, 0x22, 0x65, 0x6E, 
+0x61, 0x62, 0x6C, 0x65, 0x64, 0x22, 0x3A, 0x74, 0x72, 0x75, 0x65, 0x2C, 0x22, 0x6C, 0x69, 0x6E, 
+0x65, 0x5F, 0x63, 0x6F, 0x75, 0x6E, 0x74, 0x22, 0x3A, 0x33, 0x32, 0x2C, 0x22, 0x72, 0x61, 0x64, 
+0x69, 0x75, 0x73, 0x22, 0x3A, 0x32, 0x35, 0x35, 0x2C, 0x22, 0x6C, 0x69, 0x6E, 0x65, 0x5F, 0x77, 
+0x69, 0x64, 0x74, 0x68, 0x31, 0x30, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x22, 0x2C, 0x22, 
+0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 
+0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x22, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 
+0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x76, 0x61, 0x6C, 0x22, 0x3A, 0x31, 
+0x30, 0x30, 0x2C, 0x22, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x5F, 0x73, 0x74, 0x72, 0x22, 0x3A, 0x22, 
+0x31, 0x30, 0x30, 0x25, 0x22, 0x2C, 0x22, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x5F, 0x63, 0x6F, 0x6C, 
+0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x22, 0x2C, 0x22, 0x76, 
+0x61, 0x6C, 0x75, 0x65, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x20, 0x22, 
+0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 0x69, 0x64, 
+0x22, 0x3A, 0x35, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 
+0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x31, 0x30, 0x30, 0x25, 0x20, 0x40, 
+0x20, 0x32, 0x33, 0x3A, 0x35, 0x39, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 
+0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 
+0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 
+0x31, 0x31, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x36, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 
+0x31, 0x30, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 
+0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 
+0x30, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 
+0x22, 0x3A, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x33, 0x32, 
+0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 
+0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 
+0x23, 0x65, 0x36, 0x34, 0x61, 0x31, 0x39, 0x22, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 
+0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x65, 0x36, 0x34, 0x61, 0x31, 0x39, 
+0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 0x22, 
+0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x31, 0x2C, 0x22, 0x6F, 0x62, 
+0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x31, 0x30, 0x30, 
+0x2C, 0x22, 0x79, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x31, 0x32, 0x30, 0x2C, 0x22, 
+0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 
+0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x65, 0x36, 
+0x34, 0x61, 0x31, 0x39, 0x22, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x65, 0x36, 0x34, 0x61, 0x31, 0x39, 0x22, 0x2C, 0x20, 
+0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 0x22, 0x3A, 0x30, 0x2C, 
+0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x32, 0x35, 0x35, 0x7D, 0x0A, 0x7B, 0x22, 
+0x69, 0x64, 0x22, 0x3A, 0x31, 0x32, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 
+0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x31, 0x30, 0x32, 0x2C, 0x22, 0x79, 0x22, 
+0x3A, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x31, 0x32, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 
+0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x53, 0x6D, 0x61, 0x72, 0x74, 0x42, 
+0x4D, 0x53, 0x2E, 0x69, 0x74, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 
+0x74, 0x22, 0x3A, 0x32, 0x33, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 
+0x74, 0x22, 0x3A, 0x22, 0x53, 0x55, 0x4D, 0x20, 0x56, 0x20, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 
+0x64, 0x22, 0x3A, 0x31, 0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 
+0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 
+0x77, 0x22, 0x3A, 0x38, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 
+0x64, 0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 
+0x72, 0x22, 0x3A, 0x22, 0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 
+0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 
+0x66, 0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 
+0x5F, 0x64, 0x69, 0x72, 0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 
+0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 
+0x31, 0x36, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 
+0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x53, 0x75, 0x6D, 0x56, 0x3A, 0x22, 0x2C, 
+0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 
+0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x35, 0x30, 
+0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 
+0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 
+0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 
+0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x39, 0x39, 0x2E, 0x39, 0x56, 
+0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 
+0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 
+0x63, 0x36, 0x65, 0x38, 0x37, 0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x34, 0x35, 0x2C, 0x22, 
+0x79, 0x22, 0x3A, 0x34, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 
+0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 
+0x0A, 0x0A, 0x7B, 0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x43, 0x55, 
+0x52, 0x52, 0x45, 0x4E, 0x54, 0x20, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x32, 
+0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 
+0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x38, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x38, 
+0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 
+0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 
+0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 
+0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 
+0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 
+0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 
+0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x32, 0x36, 0x2C, 0x22, 
+0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 
+0x78, 0x74, 0x22, 0x3A, 0x22, 0x49, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 
+0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 
+0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x38, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 
+0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 
+0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x32, 0x38, 0x2C, 0x22, 0x6F, 
+0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 
+0x74, 0x22, 0x3A, 0x22, 0x2D, 0x39, 0x39, 0x39, 0x39, 0x41, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 
+0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 
+0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 0x37, 0x36, 
+0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x37, 0x38, 0x2C, 
+0x22, 0x77, 0x22, 0x3A, 0x36, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 
+0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 0x63, 0x6F, 
+0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x57, 0x41, 0x54, 0x54, 0x20, 0x22, 0x7D, 0x0A, 
+0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x33, 0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 
+0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 
+0x31, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x37, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 
+0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 
+0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 
+0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 
+0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 
+0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 
+0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 
+0x69, 0x64, 0x22, 0x3A, 0x33, 0x36, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 
+0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x57, 0x3A, 0x22, 
+0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 
+0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 
+0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 
+0x31, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 
+0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 
+0x69, 0x64, 0x22, 0x3A, 0x33, 0x38, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 
+0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x39, 0x39, 0x39, 
+0x39, 0x57, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 
+0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 
+0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 0x37, 0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x30, 
+0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x30, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x35, 0x2C, 
+0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 
+0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 
+0x22, 0x43, 0x68, 0x20, 0x4D, 0x4F, 0x53, 0x20, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 
+0x3A, 0x34, 0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 
+0x22, 0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x34, 0x30, 0x2C, 0x22, 0x77, 
+0x22, 0x3A, 0x37, 0x35, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 
+0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 
+0x22, 0x3A, 0x22, 0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 
+0x67, 0x72, 0x61, 0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 
+0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 
+0x64, 0x69, 0x72, 0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 
+0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x34, 
+0x36, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 
+0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x43, 0x4D, 0x6F, 0x73, 0x3A, 0x22, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 
+0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x34, 0x30, 
+0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 
+0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 
+0x22, 0x3A, 0x34, 0x38, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 
+0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x4F, 0x4E, 0x22, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 
+0x38, 0x37, 0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x34, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 
+0x31, 0x33, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 
+0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 
+0x7B, 0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x43, 0x61, 0x70, 0x61, 
+0x63, 0x69, 0x74, 0x79, 0x20, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x35, 0x34, 
+0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 
+0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x37, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x38, 
+0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 
+0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 
+0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 
+0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 
+0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 
+0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 
+0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x35, 0x36, 0x2C, 0x22, 
+0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 
+0x78, 0x74, 0x22, 0x3A, 0x22, 0x43, 0x61, 0x70, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 
+0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 
+0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 
+0x78, 0x22, 0x3A, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x37, 0x30, 0x2C, 0x22, 0x77, 0x22, 
+0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 
+0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x35, 0x38, 
+0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x32, 0x30, 0x30, 0x41, 0x68, 0x22, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 
+0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 
+0x37, 0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x33, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 
+0x36, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 
+0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 
+0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x41, 0x56, 0x45, 0x52, 0x41, 
+0x47, 0x45, 0x20, 0x56, 0x20, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x37, 0x34, 
+0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 
+0x3A, 0x32, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 
+0x39, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 
+0x73, 0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 
+0x22, 0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 
+0x61, 0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 
+0x61, 0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 
+0x72, 0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 
+0x74, 0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x37, 0x36, 0x2C, 
+0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x41, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 
+0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 
+0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 
+0x22, 0x3A, 0x32, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x77, 0x22, 
+0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 
+0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x37, 0x38, 
+0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x39, 0x39, 0x39, 0x39, 0x6D, 0x56, 0x22, 0x2C, 0x22, 
+0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 
+0x38, 0x37, 0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x35, 0x35, 0x2C, 0x22, 0x79, 0x22, 
+0x3A, 0x34, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x36, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 
+0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 
+0x7B, 0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x44, 0x45, 0x4C, 0x54, 
+0x41, 0x20, 0x56, 0x20, 0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x38, 0x34, 0x2C, 
+0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 
+0x32, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x38, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x39, 
+0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 
+0x22, 0x3A, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 
+0x23, 0x38, 0x34, 0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 
+0x64, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 
+0x64, 0x22, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 
+0x22, 0x3A, 0x32, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 
+0x68, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x38, 0x36, 0x2C, 0x22, 
+0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 
+0x78, 0x74, 0x22, 0x3A, 0x22, 0x44, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 
+0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 
+0x3A, 0x32, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x38, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 
+0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 
+0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x38, 0x38, 0x2C, 
+0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x39, 0x39, 0x39, 0x39, 0x6D, 0x56, 0x22, 0x2C, 0x22, 0x74, 
+0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 
+0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 
+0x37, 0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x35, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 
+0x37, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x36, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 
+0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 
+0x22, 0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x54, 0x45, 0x4D, 0x50, 0x20, 
+0x22, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x39, 0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 
+0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x34, 0x30, 0x2C, 
+0x22, 0x79, 0x22, 0x3A, 0x31, 0x31, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x39, 0x30, 0x2C, 0x22, 
+0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 
+0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x38, 0x34, 
+0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x63, 
+0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 
+0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 0x22, 0x3A, 0x32, 
+0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 
+0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x39, 0x36, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 
+0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 
+0x3A, 0x22, 0x54, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 
+0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 
+0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x34, 
+0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x31, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 
+0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 
+0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x39, 0x38, 0x2C, 0x22, 0x6F, 
+0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 
+0x74, 0x22, 0x3A, 0x22, 0x39, 0x39, 0x43, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 
+0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 0x37, 0x36, 0x22, 0x2C, 0x22, 
+0x78, 0x22, 0x3A, 0x32, 0x35, 0x35, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x30, 0x38, 0x2C, 0x22, 
+0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 
+0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 0x63, 0x6F, 0x6D, 
+0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x43, 0x68, 0x20, 0x4D, 0x4F, 0x53, 0x20, 0x22, 0x7D, 
+0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x30, 0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 
+0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x34, 0x30, 0x2C, 0x22, 
+0x79, 0x22, 0x3A, 0x31, 0x34, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x39, 0x30, 0x2C, 0x22, 0x68, 
+0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 0x2C, 
+0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x38, 0x34, 0x39, 
+0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 0x20, 
+0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 0x22, 0x3A, 0x32, 0x2C, 
+0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 0x30, 
+0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x30, 0x36, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 
+0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 
+0x3A, 0x22, 0x44, 0x4D, 0x6F, 0x73, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x66, 
+0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 0x22, 
+0x3A, 0x32, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x34, 0x30, 0x2C, 0x22, 0x77, 0x22, 
+0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 
+0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x30, 
+0x38, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 
+0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x4F, 0x4E, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 
+0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 
+0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 0x37, 0x36, 
+0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x38, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x33, 
+0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 
+0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 0x22, 
+0x63, 0x6F, 0x6D, 0x6D, 0x65, 0x6E, 0x74, 0x22, 0x3A, 0x22, 0x42, 0x61, 0x74, 0x74, 0x20, 0x22, 
+0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x31, 0x34, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 
+0x22, 0x3A, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x34, 0x30, 0x2C, 
+0x22, 0x79, 0x22, 0x3A, 0x31, 0x37, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x39, 0x30, 0x2C, 0x22, 
+0x68, 0x22, 0x3A, 0x32, 0x30, 0x2C, 0x22, 0x72, 0x61, 0x64, 0x69, 0x75, 0x73, 0x22, 0x3A, 0x30, 
+0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x38, 0x34, 
+0x39, 0x38, 0x61, 0x64, 0x22, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x63, 
+0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x31, 0x66, 0x36, 0x33, 0x61, 0x64, 0x22, 0x2C, 
+0x20, 0x22, 0x62, 0x67, 0x5F, 0x67, 0x72, 0x61, 0x64, 0x5F, 0x64, 0x69, 0x72, 0x22, 0x3A, 0x32, 
+0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x77, 0x69, 0x64, 0x74, 0x68, 0x22, 0x3A, 
+0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x31, 0x36, 0x2C, 0x22, 0x6F, 0x62, 
+0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 
+0x22, 0x3A, 0x22, 0x42, 0x61, 0x74, 0x74, 0x3A, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 
+0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x35, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x5F, 0x63, 
+0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x77, 0x68, 0x69, 0x74, 0x65, 0x22, 0x2C, 0x22, 0x78, 
+0x22, 0x3A, 0x32, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 0x37, 0x30, 0x2C, 0x22, 0x77, 
+0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 0x2C, 0x20, 0x22, 0x62, 0x67, 
+0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x7B, 0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 
+0x31, 0x38, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 0x6C, 0x61, 0x62, 0x65, 0x6C, 0x22, 
+0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 0x31, 0x36, 0x22, 0x2C, 0x22, 0x74, 0x65, 
+0x78, 0x74, 0x5F, 0x66, 0x6F, 0x6E, 0x74, 0x22, 0x3A, 0x31, 0x38, 0x2C, 0x22, 0x74, 0x65, 0x78, 
+0x74, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x23, 0x63, 0x36, 0x65, 0x38, 0x37, 
+0x36, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x32, 0x37, 0x30, 0x2C, 0x22, 0x79, 0x22, 0x3A, 0x31, 
+0x36, 0x38, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x35, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 0x32, 0x35, 
+0x2C, 0x20, 0x22, 0x62, 0x67, 0x5F, 0x6F, 0x70, 0x61, 0x22, 0x3A, 0x30, 0x7D, 0x0A, 0x0A, 0x7B, 
+0x22, 0x69, 0x64, 0x22, 0x3A, 0x31, 0x34, 0x30, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 
+0x6C, 0x65, 0x64, 0x22, 0x2C, 0x22, 0x78, 0x22, 0x3A, 0x31, 0x34, 0x30, 0x2C, 0x22, 0x79, 0x22, 
+0x3A, 0x31, 0x39, 0x30, 0x2C, 0x22, 0x77, 0x22, 0x3A, 0x34, 0x30, 0x2C, 0x22, 0x68, 0x22, 0x3A, 
+0x31, 0x30, 0x2C, 0x22, 0x62, 0x67, 0x5F, 0x63, 0x6F, 0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x67, 
+0x72, 0x65, 0x65, 0x6E, 0x22, 0x2C, 0x22, 0x62, 0x6F, 0x72, 0x64, 0x65, 0x72, 0x5F, 0x63, 0x6F, 
+0x6C, 0x6F, 0x72, 0x22, 0x3A, 0x22, 0x67, 0x72, 0x65, 0x65, 0x6E, 0x22, 0x7D, 0x0A];
+const online_cmd = [  
+0x6A, 0x73, 0x6F, 0x6E, 0x6C, 0x20, 0x7B, 0x22, 0x70, 0x61, 0x67, 0x65, 0x22, 0x3A, 0x30, 0x2C, 
+0x22, 0x69, 0x64, 0x22, 0x3A, 0x32, 0x33, 0x39, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 
+0x6D, 0x73, 0x67, 0x62, 0x6F, 0x78, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 
+0x25, 0x69, 0x70, 0x25, 0x22, 0x2C, 0x22, 0x61, 0x75, 0x74, 0x6F, 0x5F, 0x63, 0x6C, 0x6F, 0x73, 
+0x65, 0x22, 0x3A, 0x32, 0x30, 0x30, 0x30, 0x7D, 0x0A, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 
+0x20, 0x73, 0x74, 0x6F, 0x70, 0x20, 0x63, 0x6F, 0x6E, 0x73, 0x6F, 0x6C, 0x65, 0x0A];
+const offline_cmd = [  
+0x6A, 0x73, 0x6F, 0x6E, 0x6C, 0x20, 0x7B, 0x22, 0x70, 0x61, 0x67, 0x65, 0x22, 0x3A, 0x30, 0x2C, 
+0x22, 0x69, 0x64, 0x22, 0x3A, 0x32, 0x33, 0x39, 0x2C, 0x22, 0x6F, 0x62, 0x6A, 0x22, 0x3A, 0x22, 
+0x6D, 0x73, 0x67, 0x62, 0x6F, 0x78, 0x22, 0x2C, 0x22, 0x74, 0x65, 0x78, 0x74, 0x22, 0x3A, 0x22, 
+0x6F, 0x66, 0x66, 0x6C, 0x69, 0x6E, 0x65, 0x22, 0x2C, 0x22, 0x61, 0x75, 0x74, 0x6F, 0x5F, 0x63, 
+0x6C, 0x6F, 0x73, 0x65, 0x22, 0x3A, 0x31, 0x30, 0x30, 0x30, 0x30, 0x7D];
+const idle_off_cmd = [ 
+0x6A, 0x73, 0x6F, 0x6E, 0x20, 0x5B, 0x27, 0x62, 0x61, 0x63, 0x6B, 0x6C, 0x69, 0x67, 0x68, 0x74, 
+0x20, 0x7B, 0x22, 0x73, 0x74, 0x61, 0x74, 0x65, 0x22, 0x3A, 0x22, 0x4F, 0x4E, 0x22, 0x2C, 0x22, 
+0x62, 0x72, 0x69, 0x67, 0x68, 0x74, 0x6E, 0x65, 0x73, 0x73, 0x22, 0x3A, 0x32, 0x35, 0x35, 0x7D, 
+0x27, 0x5D];
+const idle_short_cmd = [  
+0x6A, 0x73, 0x6F, 0x6E, 0x20, 0x5B, 0x27, 0x62, 0x61, 0x63, 0x6B, 0x6C, 0x69, 0x67, 0x68, 0x74, 
+0x20, 0x7B, 0x22, 0x73, 0x74, 0x61, 0x74, 0x65, 0x22, 0x3A, 0x22, 0x4F, 0x4E, 0x22, 0x2C, 0x22, 
+0x62, 0x72, 0x69, 0x67, 0x68, 0x74, 0x6E, 0x65, 0x73, 0x73, 0x22, 0x3A, 0x31, 0x30, 0x30, 0x7D, 
+0x27, 0x5D];
+const idle_long_cmd = [  
+0x6A, 0x73, 0x6F, 0x6E, 0x20, 0x5B, 0x27, 0x62, 0x61, 0x63, 0x6B, 0x6C, 0x69, 0x67, 0x68, 0x74, 
+0x20, 0x7B, 0x22, 0x73, 0x74, 0x61, 0x74, 0x65, 0x22, 0x3A, 0x22, 0x4F, 0x4E, 0x22, 0x2C, 0x22, 
+0x62, 0x72, 0x69, 0x67, 0x68, 0x74, 0x6E, 0x65, 0x73, 0x73, 0x22, 0x3A, 0x31, 0x30, 0x7D, 0x27, 
+0x5D];
+const wiFiSSID = "%inputSSID%";
+const wifiPWD = "%inputPASSPHRASE%";
+const mqttServer = "%mqttServer%";
+const mqttPort = %mqttPort%;
+const mqttUserName = "%mqttUserName%";
+const mqttPassword = "%mqttPassword%";
+const mqttMOS = ("%enMOS%"=="checked")?1:0;
+const openHaspPanelID = %DyPg%;
+
+const downloadConfigFile = () => {
+   const link = document.createElement("a");
+   let content = "";
+   for (let i = 0; i < config_json.length; i++) {
+      content += String.fromCharCode(config_json[i]);
+   }
+
+   content = content.replaceAll("*!wifiSSID*!", wiFiSSID  );
+   content = content.replaceAll("*!wifiPWD*!", wifiPWD  );
+   content = content.replaceAll("*!mqttServer*!", mqttServer  );
+   content = content.replaceAll("*!mqttPort*!", mqttPort  );
+   content = content.replaceAll("*!mqttUserName*!", mqttUserName  );
+   content = content.replaceAll("*!mqttPassword*!", mqttPassword  );
+   content = content.replaceAll("*!openHaspPanelID*!", openHaspPanelID );
+
+   const file = new Blob([content], { type: 'text/plain' });
+   link.href = URL.createObjectURL(file);
+   link.download = "config.json";
+   link.click();
+   URL.revokeObjectURL(link.href);
+};
+
+const downloadPanelFile = () => {
+   const link = document.createElement("a");
+   let content = "";
+   for (let i = 0; i < scanlabs_jsonl.length; i++) {
+      content += String.fromCharCode(scanlabs_jsonl[i]);
+   }
+   if ( mqttMOS ){        
+   }
+   content = content.replaceAll("*!openHaspPanelID*!", openHaspPanelID );
+ 
+   const file = new Blob([content], { type: 'text/plain' });
+   link.href = URL.createObjectURL(file);
+   link.download = "scanlabs.jsonl";
+   link.click();
+   URL.revokeObjectURL(link.href);
+};
+const downloadExtraFile = ( dataSource, fileName ) => {
+   const link = document.createElement("a");
+   let content = "";
+   for (let i = 0; i < dataSource.length; i++) {
+      content += String.fromCharCode(dataSource[i]);
+   } 
+   const file = new Blob([content], { type: 'text/plain' });
+   link.href = URL.createObjectURL(file);
+   link.download = fileName;
+   link.click();
+   URL.revokeObjectURL(link.href);
+};
+
+function downloadAllConfFile(){
+   downloadConfigFile();
+   downloadPanelFile();
+   downloadExtraFile( online_cmd, "online.cmd");
+   downloadExtraFile( offline_cmd, "offline.cmd");
+   downloadExtraFile( idle_off_cmd, "idle_off.cmd");
+   downloadExtraFile( idle_short_cmd, "idle_short.cmd");
+   downloadExtraFile( idle_long_cmd, "idle_long.cmd");
+}   
+function submitMessage() {
+  dashBoardConfig(0);
+  setTimeout(function(){ document.location.reload(false); }, 2000);
+}
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+function dashBoardConfig( extcomp ){ //1-extract 0-compress
+  let dashBoardCfg1=%TaD1%;   
+  let dashBoardCfg2=%TaD2%;
+
+  if ( extcomp ){
+    let chartEnabled=(dashBoardCfg1 & 0x04000000)?1:0;
+    let chartTimeSpan=(dashBoardCfg1 & 0xF8000000)>>27;
+    let autoRolling=(dashBoardCfg1 & 0x02000000)?1:0;
+    let autoBrightness=(dashBoardCfg1 & 0x01000000)?1:0;
+    let brLevelMax=(dashBoardCfg1 & 0x00FF0000)>>16;
+    let brLevelAvg=(dashBoardCfg1 & 0x0000FF00)>>8;
+    let brLevelMin=(dashBoardCfg1 & 0x000000FF)>>0;
+
+    let autoRollSec=(dashBoardCfg2 & 0xFF000000)>>24;
+    let brLevelMaxS=(dashBoardCfg2 & 0x00FFF000)>>12;
+    let brLevelAvgS=(dashBoardCfg2 & 0x00000FFF)>>0;
+
+    document.getElementById("ChEn").checked=chartEnabled;
+    document.getElementById("ChT").value=chartTimeSpan;
+    document.getElementById("AuRo").checked=autoRolling;
+    document.getElementById("ROs").value=autoRollSec;
+    document.getElementById("AuBE").checked=autoBrightness;
+    document.getElementById("bMx").value=brLevelMax;
+    document.getElementById("bMe").value=brLevelAvg;
+    document.getElementById("bLw").value=brLevelMin;
+    document.getElementById("bMxs").value=brLevelMaxS;
+    document.getElementById("bMes").value=brLevelAvgS;
+ }else
+ {
+    dashBoardCfg1 = document.getElementById("ChEn").checked?(1<<26):0;  
+    dashBoardCfg1+= ((document.getElementById("ChT").value & 0xFF)<<27);
+    dashBoardCfg1+= document.getElementById("AuRo").checked?(1<<25):0;
+    dashBoardCfg1+= document.getElementById("AuBE").checked?(1<<24):0;
+    dashBoardCfg1+= ((document.getElementById("bMx").value & 0xFF)<<16);
+    dashBoardCfg1+= ((document.getElementById("bMe").value & 0xFF)<<8);
+    dashBoardCfg1+= (document.getElementById("bLw").value & 0xFF);
+    
+    dashBoardCfg2 = (document.getElementById("ROs").value & 0xFF) <<24;
+    dashBoardCfg2+= (document.getElementById("bMxs").value & 0xFFF) << 12;
+    dashBoardCfg2+= (document.getElementById("bMes").value & 0xFFF) << 0;
+
+    var urltocall="/get_oh?TaD1="+dashBoardCfg1+"&TaD2="+dashBoardCfg2;
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open("GET", urltocall, false);
+    xmlhttp.send();
+ }
+}
+function DoChecks(parIn){
+  document.getElementById("DyPg").value&=0xFF;
+  if ( !document.getElementById("DyPg").value)
+    document.getElementById("DyPg").value=1;
+  if ( document.getElementById("TaEn").checked && parIn==0){
+    document.getElementById("oHEn").checked=false;
+  }
+  if ( document.getElementById("oHEn").checked && parIn==1){
+    document.getElementById("TaEn").checked=false;
+  }
+  if ( document.getElementById("oHEn").checked==true || document.getElementById("TaEn").checked==false ||
+   document.getElementById("DyPg").value!=1){
+    document.getElementById("AuRo").disabled=document.getElementById("ROs").disabled=true;
+    document.getElementById("ChEn").disabled=document.getElementById("ChT").disabled=true;
+    document.getElementById("AuBE").disabled=true;
+    document.getElementById("bMx").disabled=document.getElementById("bMe").disabled=document.getElementById("bLw").disabled = true;
+    document.getElementById("bMxs").disabled =document.getElementById("bMes").disabled=true;
+  }
+  if ( document.getElementById("TaEn").checked==true &&
+   document.getElementById("DyPg").value==1){
+    document.getElementById("ChEn").disabled=document.getElementById("ChT").disabled=false;
+    document.getElementById("AuRo").disabled=document.getElementById("ROs").disabled=false;
+    document.getElementById("AuBE").disabled=false;
+    document.getElementById("bMx").disabled=document.getElementById("bMe").disabled=document.getElementById("bLw").disabled=false;
+    document.getElementById("bMxs").disabled =document.getElementById("bMes").disabled=false;
+  }
+
+  if ( document.getElementById("AuBE").checked==true){
+    document.getElementById("bMx").disabled=document.getElementById("bMe").disabled=document.getElementById("bLw").disabled=true;
+    document.getElementById("bMxs").disabled =document.getElementById("bMes").disabled=true;
+  }
+  if( document.getElementById("AuRo").checked==false){
+    document.getElementById("ROs").disabled=true;
+  }
+  if ( document.getElementById("ChEn").checked==false)
+    document.getElementById("ChT").disabled=true;
+
+  if (!%mqttPublishEnable% && parIn<2){
+    alert("Display requires MQTT to be configured and active");
+  }
+}
+</script>
+<body>
+  <button class="tablink" onclick="window.location.href='/';">Status</button> 
+  <button class="tablink" onclick="window.location.href='/batt';">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph';">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config';" id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade';">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+  <div style='margin:15px;'><br><center><b>REMOTE MQTT DISPLAY CONFIG</center></b>
+  <center><font id="fwStat"></font></center><br> 
+  <hr><br>
+  <table style="width: 100&#37 border-collapse: collapse;" border="0">
+  <tbody>
+  <tr>
+  <td style="width: 50&#37;">
+  <form action="/get_oh" target="hidden-form">
+    <span title="Enable TASMOTA DISPLAY">TASMOTA DISPLAY: <input type="checkBox" id="TaEn" name="TaEn" %TaEn% onclick="DoChecks(0);"></span><br>
+    <span title="Enable OPENHASP DISPLAY">OPENHASP DISPLAY: <input type="checkBox" id="oHEn" name="oHEn" %oHEn% onclick="DoChecks(1);"></span><br><br>
+    <span title="One display can show muliple BMS [1-99]">DashBoard ID: <input type="number"  maxlength="2"  min="1" max="99" size="2" name="DyPg" id="DyPg" value="%DyPg%" onchange="DoChecks(2)"></span><br>
+    <span title="The name of this BMS">DashBoard NAME: <input type="text" name="DyMg" id="DyMg" value="%DyMg%" maxlength="10" size="10" ></span><br>
+    <br><br>
+    <table style="height: 139px; width: 45%%; border-collapse: collapse; border-style: none;" border="0">
+      <tbody>
+      <tr style="height: 21px;">
+      <td style="width: 40%%; height: 21px;"><span title="Show Chart on display">Enable Chart</span></td>
+      <td style="width: 20%%; text-align: right; height: 20px;"><input id="ChEn" type="checkBox" onclick="DoChecks(0);"/></td>
+      <td style="width: 20%%; height: 20px;">&nbsp;</td>
+      <td style="width: 20%%; height: 20px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 21px;">
+      <td style="width: 40%%; text-align: right; height: 21px;">Time Span [h]</td>
+      <td style="width: 20%%; height: 21px;">&nbsp;</td>
+      <td style="width: 20%%; height: 21px;"><input id="ChT" max="24" maxlength="2" min="1" max="24"type="number" value="1" /></td>
+      <td style="width: 20%%; height: 21px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 18px;">
+      <td style="width: 40%%; text-align: right; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 21px;">
+      <td style="width: 40%%; height: 20px;"><span title="with multiple DashBoards - is the time to automatically move to next page">AutoRolling</span></td>
+      <td style="width: 20%%; text-align: right; height: 20px;"><input id="AuRo" type="checkBox" onclick="DoChecks(0);"/></td>
+      <td style="width: 20%%; height: 20px;">&nbsp;</td>
+      <td style="width: 20%%; height: 20px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 21px;">
+      <td style="width: 40%%; text-align: right; height: 21px;">Period [s]</td>
+      <td style="width: 20%%; height: 21px;">&nbsp;</td>
+      <td style="width: 20%%; height: 21px;"><input id="ROs" max="255" maxlength="3" min="0" type="number" value="30" /></td>
+      <td style="width: 20%%; height: 21px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 18px;">
+      <td style="width: 40%%; text-align: right; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 20px;">
+      <td style="width: 40%%; height: 20px;"><span title="use Brighness sensor to adjust Display brightess">AutoBrightness</span></td>
+      <td style="width: 20%%; text-align: right; height: 20px;"><input id="AuBE" type="checkBox" onclick="DoChecks(0);"/></td>
+      <td style="width: 20%%; height: 20px;">&nbsp;</td>
+      <td style="width: 20%%; height: 20px;">&nbsp;</td>
+      </tr>
+      <tr style="height: 18px;">
+      <td style="width: 40%%; height: 18px;">&nbsp;</td>
+      <td style="width: 20%%; height: 18px;">Max</td>
+      <td style="width: 20%%; height: 18px;">Med</td>
+      <td style="width: 20%%; height: 18px;">Low</td>
+      </tr>
+      <tr style="height: 21px;">
+      <td style="width: 40%%; text-align: right; height: 21px;"><span title="Brightness at the level [0-100]">Level [%%]&nbsp;</span></td>
+      <td style="width: 20%%; height: 21px;"><input id="bMx" max="100" maxlength="3" min="0" size="3" type="number" value="100" /></td>
+      <td style="width: 20%%; height: 21px;"><input id="bMe" max="100" maxlength="3" min="0" size="3" type="number" value="75" /></td>
+      <td style="width: 20%%; height: 21px;"><input id="bLw" max="100" maxlength="3" min="0" size="3" type="number" value="20" /></td>
+      </tr>
+      <tr style="height: 21px;">
+      <td style="width: 40%%; text-align: right; height: 21px;"><span title="How Long Brightness stays at the value in SECONDS">Period [s]&nbsp;</span></td>
+      <td style="width: 20%%; height: 21px;"><input id="bMxs" max="3600" maxlength="3" min="0" size="3" type="number" value="120" /></td>
+      <td style="width: 20%%; height: 21px;"><input id="bMes" max="3600" maxlength="3" min="0" size="3" type="number" value="60" /></td>
+      <td style="width: 20%%; height: 21px;"><input max="1" maxlength="1" min="0" size="3" type="number" value="00" disabled="true"/></td>
+      </tr>
+    </tbody>
+  </table>
+  <br><br><input type="submit" value="Submit" onclick="submitMessage()"><br><br>  
+  </form></td>
+  <td style="width: 50&#37;"></td>
+  </tr>
+  </tbody>
+  </table>
+<hr><br>  
+<div class="btn-group">
+  <button onclick="window.location.href='config';">BACK to CONFIG</button>
+  <button onclick = "downloadAllConfFile()">GENERATE openHASP CONFIG</button>
+  <span title="Download Instruction how to configure TASMOTA or OPENHASP Color Display">
+  <button onclick="window.location.href='https://www.dalybmswifi.com/images/';"> DOWNLOAD DISPLAY MANUAL </button>
+  </span>
+</div>
+<iframe style="display:none" name="hidden-form"></iframe>
+</div>
+  <script>
+    openTab('red');
+    if ( !%fwStatus% ){
+      document.getElementById("DyPg").disabled = true;
+      document.getElementById("DyMg").disabled = true;
+      document.getElementById("fwStat").innerHTML = "<br><a id=\"unLicensed\" href=\"license.html\"><b>ACTIVATE</b></a><br>";
+     }
+     dashBoardConfig(1);
+     DoChecks(2);
+  </script>
+</body></html><!--FFILE-->
+<!--HFILE:failureCodes.html--> 
+<!DOCTYPE HTML><html>
+<head>
+  <title>SmartBMS WiFi</title>    
+  <style>
+body {
+ min-width: 310px;
+ max-width: 1000px;
+ height: 400px;
+ margin: 0 auto;
+ font-family: "Lato", sans-serif;
+}
+h2 {
+ font-family: Arial;
+ font-size: 2.5rem;
+ text-align: center;
+}
+.tablink {
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-size: 13px;
+  width: 20%% ;
+}
+.tablink:hover {
+  background-color: #777;
+}
+.tabcontent {
+  color: black;
+  display: none;
+  padding: 20px;
+  text-align: center;
+}
+.btn-group button {
+  background-color: #04AA6D; 
+  border: 1px solid green; 
+  border-radius: 12px;
+  margin: 4px 2px;
+  color: white; 
+  padding: 10px 24px; 
+  cursor: pointer; 
+  float: left; 
+}
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.btn-group button:not(:last-child) {
+  border-right: none; 
+}
+.btn-group button:hover {
+  background-color: #3e8e41;
+}
+</style> 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<script>
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+</script>
+<body>
+  <button class="tablink" onclick="window.location.href='/';">Status</button> 
+  <button class="tablink" onclick="window.location.href='/batt';">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph';">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config';" id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade';">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+  <div style='margin:15px;'><br><center><b>BMS FAILURES CODE</center></b><br><br><hr><br>
+  <div id='failureCodes'></div><br><br>
+  <div class="btn-group">
+    <button onclick="window.location.href='/';">BACK to HOME</button>
+  </div>  
+<script>
+  var theFailureStatus = document.getElementById('failureCodes');
+  const FArr = [%bmsFailuresString%];
+  const bmsType = %bmsKind%;
+  const protocolType = %prtType%;
+  const Alarms = %bmsFailBool%;
+  openTab('red');
+  let FStr = "Model: ";
+  if ( bmsType == 0){ 
+    FStr += "DALY-BMS<br>Protocol: ";
+  if (protocolType == 0) FStr += "Former";
+  if (protocolType == 1) FStr += "New";
+  FStr +="<br>Alarms: ";
+  if (Alarms) FStr += "<br>"; else FStr += "NONE<br>";
+  if ( FArr[0] & 1<<0 ) FStr += "Cell high V L1";
+  if ( FArr[0] & 1<<1 ) FStr += "Cell high V L2";
+  if ( FArr[0] & 1<<2 ) FStr += "Cell low V L1";
+  if ( FArr[0] & 1<<3 ) FStr += "Cell low V L2";
+  if ( FArr[0] & 1<<4 ) FStr += "Sum high V L1";
+  if ( FArr[0] & 1<<5 ) FStr += "Sum high V L1";
+  if ( FArr[0] & 1<<6 ) FStr += "Sum low V L1";
+  if ( FArr[0] & 1<<7 ) FStr += "Sum low V L2";
+  if ( FArr[1] & 1<<0 ) FStr += "Chg high T L1";
+  if ( FArr[1] & 1<<1 ) FStr += "Chg high T L2";
+  if ( FArr[1] & 1<<2 ) FStr += "Chg low T L1";
+  if ( FArr[1] & 1<<3 ) FStr += "Chg low T L2";
+  if ( FArr[1] & 1<<4 ) FStr += "Dischg high T L1";
+  if ( FArr[1] & 1<<5 ) FStr += "Dischg high T L2";
+  if ( FArr[1] & 1<<6 ) FStr += "Dischg low T L1";
+  if ( FArr[1] & 1<<7 ) FStr += "Dischg low T L2";
+  if ( FArr[2] & 1<<0 ) FStr += "Chg overcurr. L1";
+  if ( FArr[2] & 1<<1 ) FStr += "Chg overcurr. L2";
+  if ( FArr[2] & 1<<2 ) FStr += "Dischg overcurr. L1";
+  if ( FArr[2] & 1<<3 ) FStr += "Dischg overcurr. L2";
+  if ( FArr[2] & 1<<4 ) FStr += "SOC high L1";
+  if ( FArr[2] & 1<<5 ) FStr += "SOC high L2";
+  if ( FArr[2] & 1<<6 ) FStr += "SOC Low L1";
+  if ( FArr[2] & 1<<7 ) FStr += "SOC Low L2";
+  if ( FArr[3] & 1<<0 ) FStr += "Diff volt L1";
+  if ( FArr[3] & 1<<1 ) FStr += "Diff volt L2";
+  if ( FArr[3] & 1<<2 ) FStr += "Diff temp L1";
+  if ( FArr[3] & 1<<3 ) FStr += "Diff temp L2";
+  if ( FArr[4] & 1<<0 ) FStr += "Chg MOS high T";
+  if ( FArr[4] & 1<<1 ) FStr += "Dischg MOS high T ";
+  if ( FArr[4] & 1<<2 ) FStr += "Chg MOS T sensor err";
+  if ( FArr[4] & 1<<3 ) FStr += "Dischg MOS T sensor err";
+  if ( FArr[4] & 1<<4 ) FStr += "Chg MOS adhesion err";
+  if ( FArr[4] & 1<<5 ) FStr += "Dischg MOS adhesion err";
+  if ( FArr[4] & 1<<6 ) FStr += "Chg MOS open circuit err";
+  if ( FArr[4] & 1<<7 ) FStr += "Discrg MOS open circuit err";
+  if ( FArr[5] & 1<<0 ) FStr += "AFE collect chip err";
+  if ( FArr[5] & 1<<1 ) FStr += "Voltage collect dropped";
+  if ( FArr[5] & 1<<2 ) FStr += "Cell T sensor err";
+  if ( FArr[5] & 1<<3 ) FStr += "EEPROM err";
+  if ( FArr[5] & 1<<4 ) FStr += "RTC err";
+  if ( FArr[5] & 1<<5 ) FStr += "Precharge failure";
+  if ( FArr[5] & 1<<6 ) FStr += "Comm. failure";
+  if ( FArr[5] & 1<<7 ) FStr += "Internal comm. failure";
+  if ( FArr[6] & 1<<0 ) FStr += "Current module fault";
+  if ( FArr[6] & 1<<1 ) FStr += "Sum voltage detect fault";
+  if ( FArr[6] & 1<<2 ) FStr += "Short circuit protect fault";
+  if ( FArr[6] & 1<<3 ) FStr += "Low volt forbidden chg fault";
+}
+if ( bmsType == 1){
+  FStr += "JK-BMS<br>Protocol: ";
+  if (protocolType == 0) FStr += "000-4G-GPS";
+  if (protocolType == 1) FStr += "001-RS485 Modbus v1.0";
+  if (protocolType == 2) FStr += "000-CAN Protocol (250K) V2.0";
+  FStr +="<br>Alarms: ";
+  if (Alarms) FStr += "<br>"; else FStr += "NONE<br>";
+  if ( protocolType ==0 ){
+    if ( FArr[0] & 1<<0 ) FStr += "Sensor2 Overtemperature";
+    if ( FArr[0] & 1<<1 ) FStr += "Sensor1 or2 low temperature";
+    if ( FArr[0] & 1<<2 ) FStr += "Cell Overvoltage";
+    if ( FArr[0] & 1<<3 ) FStr += "Cell Undervoltage";
+    if ( FArr[0] & 1<<4 ) FStr += "309_A protection";
+    if ( FArr[0] & 1<<5 ) FStr += "309_B protection";
+    if ( FArr[1] & 1<<0 ) FStr += "Low capacity";
+    if ( FArr[1] & 1<<1 ) FStr += "Power MosFet overtemperature";
+    if ( FArr[1] & 1<<2 ) FStr += "Overvoltage";
+    if ( FArr[1] & 1<<3 ) FStr += "Discharging Undervoltage";
+    if ( FArr[1] & 1<<4 ) FStr += "Sensor1_2 Overtemperature";
+    if ( FArr[1] & 1<<5 ) FStr += "Charging Overcurrent";
+    if ( FArr[1] & 1<<6 ) FStr += "Discharging Overcurrent";
+    if ( FArr[1] & 1<<7 ) FStr += "Cell voltage difference";
+  }
+  if ( protocolType ==1){
+    if (FArr[0] & (1<<0)) FStr += "AlarmWireRes";
+    if (FArr[0] & (1<<1)) FStr += "AlarmMosOTP";
+    if (FArr[0] & (1<<2)) FStr += "AlarmCellQuantity";
+    if (FArr[0] & (1<<3)) FStr += "AlarmCurSensorErr";
+    if (FArr[0] & (1<<4)) FStr += "AlarmCellOVP";
+    if (FArr[0] & (1<<5)) FStr += "AlarmBatOVP";
+    if (FArr[0] & (1<<6)) FStr += "AlarmChOCP";
+    if (FArr[0] & (1<<7)) FStr += "AlarmChSCP";
+    if (FArr[1] & (1<<0)) FStr += "AlarmChOTP";
+    if (FArr[1] & (1<<1)) FStr += "AlarmChUTP";
+    if (FArr[1] & (1<<2)) FStr += "AlarmCPUAuxCommuErr";
+    if (FArr[1] & (1<<3)) FStr += "AlarmCellUVP";
+    if (FArr[1] & (1<<4)) FStr += "AlarmBatUVP";
+    if (FArr[1] & (1<<5)) FStr += "AlarmDchOCP";
+    if (FArr[1] & (1<<6)) FStr += "AlarmDchSCP";
+    if (FArr[1] & (1<<7)) FStr += "AlarmDchOTP";
+    if (FArr[2] & (1<<0)) FStr += "AlarmChargeMOS";
+    if (FArr[2] & (1<<1)) FStr += "AlarmDischargeMOS";
+    if (FArr[2] & (1<<2)) FStr += "GPSDisconneted";
+    if (FArr[2] & (1<<3)) FStr += "ModifyPWDinTime";
+    if (FArr[2] & (1<<4)) FStr += "DischargeOnFailed";
+    if (FArr[2] & (1<<5)) FStr += "BatteryOverTemp";
+    if (FArr[2] & (1<<6)) FStr += "TemperatureSensorAnomaly";
+    if (FArr[2] & (1<<7)) FStr += "PLCModuleAnomaly";
+  }
+  if (protocolType == 2) {
+    if (FArr[0] & (1<<0)) FStr += "Line resistance too high<br>";
+    if (FArr[0] & (1<<1)) FStr += "MOS over-temperature<br>";
+    if (FArr[0] & (1<<2)) FStr += "Cell count mismatch<br>";
+    if (FArr[0] & (1<<3)) FStr += "Current sensor abnormal<br>";
+    if (FArr[0] & (1<<4)) FStr += "Cell over-voltage<br>";
+    if (FArr[0] & (1<<5)) FStr += "Pack over-voltage<br>";
+    if (FArr[0] & (1<<6)) FStr += "Charge over-current<br>";
+    if (FArr[0] & (1<<7)) FStr += "Charge short-circuit<br>";
+    if (FArr[1] & (1<<0)) FStr += "Charge temperature too high<br>";
+    if (FArr[1] & (1<<1)) FStr += "Charge temperature too low<br>";
+    if (FArr[1] & (1<<2)) FStr += "Internal communication fault<br>";
+    if (FArr[1] & (1<<3)) FStr += "Cell under-voltage<br>";
+    if (FArr[1] & (1<<4)) FStr += "Pack under-voltage<br>";
+    if (FArr[1] & (1<<5)) FStr += "Discharge over-current<br>";
+    if (FArr[1] & (1<<6)) FStr += "Discharge short-circuit<br>";
+    if (FArr[1] & (1<<7)) FStr += "Discharge temperature too high<br>";
+    if (FArr[2] & (1<<0)) FStr += "Charge MOS fault<br>";
+    if (FArr[2] & (1<<1)) FStr += "Discharge MOS fault<br>";
+  }
+}
+ theFailureStatus.insertAdjacentHTML( 'beforeend', FStr );
+ </script>
+</body></html>
+
+<!--FFILE-->
+<!--HFILE:gauge-rep-jk.html--> 
+<html>
+<head>
+<title>ScanLabs SMART BMS DATA EXTRACTOR</title>
+<meta name="viewport"content="width=device-width,initial-scale=1">  
+<style>
+body{max-width:1000px;margin:0 auto;font-family:Lato,sans-serif}
+.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{color:#000;display:none;padding:20px;text-align:center}
+a:link{color:blue;background:0 0;text-decoration:none}
+.blink{animation:blinker 2s linear infinite;color:red;font-size:1em;margin-bottom:20px}
+@keyframes blinker{50%%{opacity:0}}
+table,th,td{color:#fff;font-weight:400;border:0}
+table{border-collapse:collapse}
+tr{border:0}
+th1{padding:10px;font-size:14px;display:inline-block;text-decoration:none;border-right:1px solid #41cd52;color:#fff}
+.center{margin:0 auto;width:100%%;border:0}
+.buttonR{background:#144964;border:0;color:#fff;padding:3px;text-align:center;text-decoration:none;display:inline-block;font-size:16px;margin:4px 2px;cursor:pointer;border-radius:40%%}
+.w45{width:45%%}
+.w10{width:10%%}
+.w38{width:38%%}
+.w24{width:24%%}
+.w220{width:220px}
+.w160{width:160px}
+.txr{text-align:right}
+.txl{text-align:left}
+.txc{text-align:center}
+.c41{color:#41cd52}
+.fs14{font-size:14px}
+.font0{color:#fffffe;font-size:12px;font-weight:400}
+.font1{color:#41cd52;font-size:35px;font-weight:700}
+.font2{color:#41cd52;font-size:17px;font-weight:700;vertical-align:top}
+.font4{font-size:16px;text-align:center;font-weight:400;vertical-align:text-bottom}
+.font5{color:#41cd52;font-size:8px;text-align:left;font-weight:400;vertical-align:top}
+@media (min-width: 900px) { .font0 { font-size: calc(12px * 1.30); } .fs14 { font-size: calc(14px * 1.20); } .font4 { font-size: calc(16px * 1.20); } .font5 { font-size: calc(8px * 1.20); }}
+</style>
+</head>
+<script src="%GAUGE_SOURCE%"></script>
+<body style="background-color:#1f1e22"onload="setSOC()">
+<button class="tablink"onclick="closeSocket();window.location.href=window.location.href;"id="defaultOpen"">Status</button> 
+<button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'batt';">Battery</button>
+<button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'graph';">Monitor</button>
+<button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'config';">Settings</button>
+<button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'fwupgrade';">Upgrade</button>
+<div id="Status"class="tabcontent">
+<table style="width:100%%">
+  <tr>
+    <th1><span class="font0">Charge:&nbsp<b><a id="CHM"href="#"class="nounderline"onclick="SwitchChargeMOS();return false;"></a></b></span></th1>
+    <th1><span class="font0">Discharge:&nbsp<b><a id="SDM"href="#"class="nounderline"onclick="SwitchDisChargeMOS();return false;"></a></b></span></th1>
+    <th1><span class="font0">Balance:&nbsp<b><a id="BLS"href="#"class="nounderline"onclick="SwitchBalanceMOS();return false;"></a></b></span></th1>
+    <th1 style="border-right:0"><span class="font0">Alarm:&nbsp<b><a id="alarmStat" href="bmsalarms" class="nounderline"></a></b></span></th1>
+  </tr>
+</table>
+<span class="font0" id="wbsts"></span>
+<br><span class="font0"><b><span class="font0" id="ctm"></span></b><span class="font0" id="geo"></span></span>
+<table class="center">
+  <tr>
+    <td class="w45"></td>
+    <td class="w10"><canvas id="SOC"></canvas></td>
+    <td class="w45"></td>
+  </tr>
+</table>
+<table class="center">
+  <tr>
+    <td class="w38 txr">
+      <span class="font1" id="vol"></span><span class="font2">V</span>
+    </td>
+    <td class="w24 txc">
+      <span class="font4" id="dnm"></span>
+    </td>
+    <td class="w38 txl">
+      <span class="font1" id="cur"></span><span class="font2">A</span>
+    </td>
+  </tr>
+</table>
+<br>
+<table class="center">
+  <tr>
+    <td class="w220 txr fs14">Battery Pow.:</td>
+    <td class="w160 txl fs14 c41">&nbsp;<span id="wat"></span><span class="font5">&nbsp;W</span></td>
+    <td class="w220 txr fs14">Ave.Cell Volt:</td>
+    <td class="w160 txl fs14 c41">&nbsp;<span id="vav"></span><span class="font5">&nbsp;V</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Battery Cap.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="bcp"></span><span class="font5">&nbsp;Ah</span></td>
+    <td class="txr fs14">Cell Volt. Diff.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="vdl"></span><span class="font5">&nbsp;mV</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Remain Cap.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="rcp"></span><span class="font5">&nbsp;Ah</span></td>
+    <td class="txr fs14">Balance Curr.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="blc"></span><span class="font5">&nbsp;mA</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Remain Batt.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="soc"></span><span class="font5">&nbsp;%%</span></td>
+    <td class="txr fs14">MOS Temp.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="mtm"></span><span class="font5">&nbsp;&#8451;</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Cycle Count:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="cyc"></span></td>
+    <td class="txr fs14">Battery T1:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="bt1"></span><span class="font5">&nbsp;&#8451;</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Cycle Cap.:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="ccy"></span><span class="font5">&nbsp;Ah</span></td>
+    <td class="txr fs14">Battery T2:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="bt2"></span><span class="font5">&nbsp;&#8451;</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Battery T4:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="bt4"></span><span class="font5">&nbsp;&#8451;</span></td>
+    <td class="txr fs14">Battery T5:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="bt5"></span><span class="font5">&nbsp;&#8451;</span></td>
+  </tr>
+  <tr>
+    <td class="txr fs14">Heartbeat:</td>
+    <td class="txl fs14 c41">&nbsp;<span id="hbt"></span></td>
+    <td class="txr fs14">Max Battery:</td>
+    <td class="txl fs14 c41">
+      &nbsp;<span id="msc"></span>
+      <span class="font5">%% <span id="mst"></span></span>
+    </td>
+  </tr>
+</table>
+<p id="allBatts"></p><p id="allRes"></p>
+<br><a href="releasenote.html"class="nounderline"style="color:#fffffe">FW Version:<b>&nbsp<span id="fwv"></span></a></b>
+<span class="fs14" id="fwAvail"></span>
+<span class="fs14" id="fwStat"></span>
+<br><span class="fs14" style="color:#fffffe"><span id="val"></span></span>
+</div>
+<script>
+var tID=0;
+var gateway=`ws://${window.location.hostname}:${window.location.port}/ws`;
+var websocket,IntervalId;
+var disChargeFetState=0,chargeFetState=0,packWatts=0,fwStatus=1,newFWAvl=0,enMOS=0,wMode=1,fal=0,cellN=0;
+var Clayout=255;
+var onOpenTO=1500;
+var battsNow=[];
+var resNow=[]; 
+var optsJK={
+    angle:0,
+    lineWidth:0.15,
+    radiusScale:0.80,
+    pointer:{
+      length:0.50,
+      strokeWidth:0.04,
+      color:'#41cd52'  
+    },
+    limitMax:false,    
+    limitMin:false,    
+    generateGradient:true,
+    highDpiSupport:true,    
+    percentColors:[[0.0,"#e30e0e"],
+    [0.5,"#e3dc0e"],
+    [0.8,"#cae30e"],
+    [1.0,"#0ee331"]
+    ],   
+  staticLabels:{
+    font:"15px sans-serif", 
+    labels:[0,25,50,75,100], 
+    color:"#41cd52", 
+    fractionDigits:0  
+  },
+};
+window.addEventListener("beforeunload", function () {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        //websocket.send("wclose");
+        websocket.close(3001, "page closing");
+    }
+});
+let SwitchAlertMsg="Feauture disabled - enable it on Settings->MISC page";
+function closeSocket(){
+  clearInterval(IntervalId);
+  websocket.close(3001,"force");
+}
+function onload(event){ 
+  setTimeout(function(){initWebSocket();},1000);
+  document.getElementById("wbsts").innerHTML="<br><span class=\"blink\"><b>Open Stream ...</b></span><br>";
+}
+function startSequence(){tID=0;websocket.send("getBMSData 0");}
+function initWebSocket(){
+    //console.log('WebSocket Init...');
+    websocket=new WebSocket(gateway);
+    websocket.onopen=onOpen;
+    websocket.onclose=onClose;
+    websocket.onmessage=onMessage;
+    websocket.onerror=onError;
+}
+function onError(event){
+    //console.log('WebSocket Error');
+    clearInterval(IntervalId);
+    setTimeout(function(){window.location.reload();},2000);
+}
+function onOpen(event){
+    //console.log('WebSocket Open');
+    startSequence();
+    IntervalId = setInterval(startSequence, 2000);
+}
+function onClose(event){
+    //console.log('WebSocket Closed');
+    clearInterval(IntervalId);
+    if (event.code !=3001)
+        setTimeout(function(){window.location.reload();},3000);
+}
+function onMessage(event){
+    console.log(event.data);
+    var myObj=JSON.parse(event.data);
+    var keys;
+    if (myObj) keys=Object.keys(myObj); else return;
+    for (var i=0; i < keys.length; i++){
+        var key=keys[i];
+        switch (key){
+            case 'soc':var tmpSOC=myObj[key];document.getElementById(key).innerHTML=tmpSOC;setSOC(tmpSOC);break;
+            case 'dfs':disChargeFetState=myObj[key];set_SWITCH_MosStatus(0);break;             
+            case 'cfs':chargeFetState=myObj[key];set_SWITCH_MosStatus(1);break;
+            case 'bls':balanceFetState=myObj[key];set_SWITCH_MosStatus(2);break;             
+            case 'lic':fwStatus=myObj[key];break;
+            case 'nfa':newFWAvl=myObj[key];break; 
+            case 'ems':enMOS=myObj[key];break;
+            case 'wat':packWatts=myObj[key];break;
+            case 'wmd':wMode=myObj[key];break;            
+            case 'fal':fal=myObj[key];break;
+            case 'cel':cellN=myObj[key];break;
+            case 'lay':Clayout=myObj[key];break;
+            case 'lst':tID=myObj[key];break;
+            case 'bat':battsNow=myObj[key];break;
+            case 'res':resNow=myObj[key];break;
+            default:const element=document.getElementById(key);if (element) element.innerHTML=myObj[key];break;
+        }
+    }
+    if (tID == 255) {updRTdata();} else {websocket.send("getBMSData " + tID);}
+}
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+function SwitchDisChargeMOS(){
+  var urltocall="/SwMOS?switch=dis"+ "&set="+ !disChargeFetState ;
+  var msg=disChargeFetState?"OFF":"ON";
+  if (!enMOS){alert(SwitchAlertMsg);return;}
+  xmlhttp=new XMLHttpRequest();
+  if (confirm("Switch "+ msg  + " DISCHARGE MOS ?")==true){
+    xmlhttp.open("GET",urltocall,false);
+    xmlhttp.send();
+    disChargeFetState=!disChargeFetState;
+    set_SWITCH_MosStatus(0);
+    websocket.close();
+  }
+}
+function SwitchChargeMOS(){
+  var urltocall="/SwMOS?switch=crg"+ "&set="+ !chargeFetState ;
+  var msg=chargeFetState?"OFF":"ON";
+  if (!enMOS){alert(SwitchAlertMsg);return;}
+  xmlhttp=new XMLHttpRequest();
+  if (confirm("Switch "+ msg + " CHARGE MOS ?")==true){
+    xmlhttp.open("GET",urltocall,false);
+    xmlhttp.send();
+    chargeFetState=!chargeFetState;
+    set_SWITCH_MosStatus(1);
+    websocket.close();
+  }
+}
+function SwitchBalanceMOS(){
+  var urltocall="/SwMOS?switch=bal"+ "&set="+ !balanceFetState ;
+  var msg=balanceFetState?"OFF":"ON";
+  if (!enMOS){alert(SwitchAlertMsg);return;}
+  xmlhttp=new XMLHttpRequest();
+  if (confirm("Switch "+ msg + " BALANCE MOS ?")==true){
+    xmlhttp.open("GET",urltocall,false);
+    xmlhttp.send();
+    chargeFetState=!chargeFetState;
+    set_SWITCH_MosStatus(2);
+    websocket.close();
+  }
+}
+function setSOC(theSoc){
+  var target=document.getElementById('SOC'); 
+  var gauge=new Gauge(target).setOptions(optsJK);   
+  gauge.maxValue=100; 
+  gauge.setMinValue(0);  
+  gauge.animationSpeed=1; 
+  gauge.set(theSoc); 
+}
+function set_SWITCH_MosStatus(ch_dsch){
+  var theSwitchMOSStatus,theSwitchCurrStatus,objID;
+  switch (ch_dsch) {
+    case 0:objID="SDM";theSwitchCurrStatus=disChargeFetState;break;
+    case 1:objID="CHM";theSwitchCurrStatus=chargeFetState;break;
+    case 2:objID="BLS";theSwitchCurrStatus=balanceFetState;break;
+    default:return;break;
+  }
+  var DSMText="<span class=\"fs14\" style=\"color:";
+  if (theSwitchCurrStatus)
+    DSMText +="green;\">ON"; 
+  else
+    DSMText +="red;\">OFF";
+  DSMText +="</span>";
+  document.getElementById(objID).innerHTML=DSMText;
+}  
+function updRTdata(){
+    var element;
+    tID=0;
+    document.getElementById("wbsts").innerHTML="";
+    document.getElementById("wat").innerHTML=packWatts;
+    if (!fwStatus)
+      document.getElementById("fwStat").innerHTML="<br><a id=\"unLicensed\"href=\"license.html\"><span class=\"blink\"><b>ACTIVATE SW</b></span></a>";
+    else
+      document.getElementById("fwStat").innerHTML="";
+    if (newFWAvl)
+      document.getElementById("fwAvail").innerHTML="<br><a href=\"https://www.dalybmswifi.com/fwrels/\"><span class=\"blink\"><b>NEW FIRMWARE</b></span></a>";    
+
+    populateBatts();populateRes();populateCellsNum();populateAlms();
+}
+function openPopup() {
+    const lat = %inputLATITUDE%;
+    const lon = %inputLONGITUDE%;
+    const url = `solar?lat=${lat}&lon=${lon}`;
+    window.open(
+        url,
+        "solarPopup",
+        "width=1100,height=700,resizable=yes,scrollbars=yes"
+    );
+}
+function populateGeo(){
+  var geoStr="<br><span onclick=\"openPopup()\" style=\"cursor:pointer;\">SunRise <b><span id=\"sri\"></span></b> - SunSet <b><span id=\"sst\"></span></b> <span title=\"daylight difference vs yesterday\">(<span id=\"ddu\"></span>s)</span></span><br><span title=\"click to see a week forecast\"><a href=\"\" onclick=\"openWeatherWindow()\" style=\"text-decoration:none;color:#fffffe\"> Today <b><span id=\"wtd\"></span></b></b>  Frcst <b><span id=\"wtm\"></span></b></a></span>";
+  if ( %geo% )
+    document.getElementById("geo").innerHTML=geoStr;
+  else
+    document.getElementById("geo").innerHTML="<br><a href=\"/config\"><span class=\"blink\"><b>SET PLANT COORDINATES TO SYNC TIME</b></span></a>"
+}
+function populateCellsNum(){let NumCll = document.getElementsByName("cel"); for (let cell of NumCll) { cell.textContent = cellN;}}
+function populateBatts(){
+  var maxRows=Math.trunc(battsNow.length / 3)+1;
+  var maxColums=battsNow.length, ckRes=0;
+  var max=battsNow.reduce((iMax,x,i,arr)=> x > arr[iMax] ? i :iMax,0);
+  let min=battsNow.reduce((iMax,x,i,arr)=> x < arr[iMax] ? i :iMax,0);
+  let battArrayString="<p style=\"color:#96d0ff\"><b><span name=\"cel\"></span> Cells Voltage</b></p><table class=\"center\">";
+  let string1="<span class=\"font5\" ", string2=">&nbsp;V</span></td>";
+  let battID=0;
+  if (maxColums > 2) 
+    maxColums=3;
+  for (row=0; row < maxRows; row++){
+    battArrayString +="<tr>";
+    for (cln=0; cln < maxColums ; cln++){
+      if (battID < battsNow.length){
+        if (battsNow[battID]) ckRes++;
+        battsNow[battID]=(battsNow[battID]/1000).toFixed(3);
+        battArrayString += "<td style=\"width:16%%;text-align:right\"><button class=\"buttonR\">&nbsp"+ ("0"+ (battID+1)).slice(-2) + "&nbsp</button></td>";
+        battArrayString += "<td style=\"width:16%%;text-align:left;padding:10px;color:";
+        if (battID==max)
+          battArrayString += "red\">"+ battsNow[battID] + string1 + "style=\"color:red\"" + string2;
+        else if (battID==min)
+          battArrayString += "white\">"+ battsNow[battID] + string1 + "style=\"color:#fffffe\"" + string2;
+        else
+          battArrayString += "#41cd52\">"+ battsNow[battID] + string1 + string2;
+        battID++;
+      }
+    }
+    battArrayString +="</tr>"; 
+  }
+  battArrayString +="</table>"; 
+  if (ckRes) document.getElementById("allBatts").innerHTML=battArrayString;  
+}
+function populateRes(){
+  var maxRows=Math.trunc(resNow.length / 3)+1;
+  var maxColums=resNow.length;
+  let battArrayString="<p style=\"color:#96d0ff\"><b><span name=\"cel\"></span> Cells Wiring Resistance</b></p><table class=\"center\">";
+  let battID=0, ckRes=0;
+  if (maxColums > 2) 
+    maxColums=3;
+  for (row=0; row < maxRows; row++){
+    battArrayString +="<tr>";
+    for (cln=0; cln < maxColums ; cln++){
+      if (battID < resNow.length){
+        if (resNow[battID]) ckRes++;
+        resNow[battID]=(resNow[battID]/1000).toFixed(3);
+        battArrayString += "<td style=\"width:16%%;text-align:right\"><button class=\"buttonR\">&nbsp"+ ("0"+ (battID+1)).slice(-2) + "&nbsp</button></td>";
+        battArrayString += "<td style=\"width:16%%;text-align:left;padding:10px;color:#41cd52;\">"+ resNow[battID] + "<span class=\"font5\">&nbsp&#8486;</span></td>";
+        battID++;
+      }
+    }
+    battArrayString +="</tr>"; 
+  }
+  battArrayString +="</table>"; 
+  if (ckRes) document.getElementById("allRes").innerHTML=battArrayString;  
+}
+function populateAlms(){
+  let theString="<span class=\"fs14\" style=\"color:";
+  if (fal){theString +="yellow\">ON";}else{ theString+="green\">OFF";}
+  theString+="</span>";
+  document.getElementById("alarmStat").innerHTML=theString ;
+}
+function openWeatherWindow(){
+    if (wMode)
+      window.open("%weatherLink%","Weather","width=500,height=120");
+}
+window.addEventListener('load',onload());
+openTab('red');
+populateGeo();
+</script>   
+</body>
+</html> 
+
+<!--FFILE-->
+<!--HFILE:gauge-rep.html--> 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ScanLabs SMART BMS DATA EXTRACTOR</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">  
+  <style>
+  body{max-width:1000px;margin:0 auto;font-family:"Lato",sans-serif;}
+  h2{font-family:Arial;font-size:2.5rem;text-align:center;}
+  .tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+  .tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+  .tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+  .tabcontent{color:#000;display:none;padding:20px;text-align:center}
+  a:link{color:blue;background-color:transparent;text-decoration:none;}
+  .blink{animation:blinker 2s linear infinite;color:red;font-size:1em;margin-bottom:20px;}
+  @keyframes blinker{50%%{opacity:0;}}
+  table,th,td{color:white;font-weight:normal;border:0px solid white;}
+  tablef,thf,tdf{color:black;font-weight:normal;border:0px solid white;}
+  table{border-collapse:collapse;}
+  tr{border:none;}
+  th1{padding:10px;font-size:14px;display:inline-block;text-decoration:none;border-right:1px solid #41cd52;color:#fff;}
+  font1{color:#41cd52;font-size:35px;font-weight:bold;}
+  font2{color:#41cd52;font-size:17px;font-weight:bold;vertical-align:top;}
+  font5{color:#41cd52;font-size:8px;text-align:left;font-weight:normal;vertical-align:top;}
+  .center{margin-left:auto;margin-right:auto;width:100%%;border:none;}
+  .buttonn{background-color:#144964;border:none;color:white;padding:3px;text-align:center;text-decoration:none;display:inline-block;font-size:17px;margin:4px 2px;cursor:pointer;}
+  .button1{border-radius:40%%;}
+  a:link{color:blue;background-color:transparent;text-decoration:none;}
+  </style>
+</head>
+<script src="%GAUGE_SOURCE%"></script>
+<body onload="setSOC()">
+  <button class="tablink"onclick="closeSocket();window.location.href=window.location.href;"id="defaultOpen"">Status</button> 
+  <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'batt';">Battery</button>
+  <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'graph';">Monitor</button>
+  <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'config';">Settings</button>
+  <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'fwupgrade';">Upgrade</button>
+  <div id="Status"class="tabcontent">
+  <canvas id="SOC"></canvas>
+  <br>SOC <b><span id="soc"></span>&#37  <span id="don"></span></b><br>
+  <span id="wbsts"></span>
+  <br><b><span id="ctm"></span></b><span id="geo"></span><br>
+  <br>Battery Pack V-I:<b> <span id="vol"></span></b> V ,<b><span id="cur"></span> </b> A
+  <div id='packWattStatus'></div>
+  Max SOC <b><span id="msc"></span>&#37</b> at <b><span id="mst"></span></b>
+  <br>Remaining Capacity:&nbsp<b><span id="rcp"></span> Ah</b>                                                         
+  <br>Package Temperature:&nbsp<b><span id="tav"></span> &#8451</b>
+  <br>Average Batteries:&nbsp<b><span id="vav"></span> mV</b>
+  <br>&#916V on <b><span id="cel"></span></b> Cells:&nbsp<b><span id="vdl"></span> mV</b>
+  <br>BMS Chrg / Dischrg Cycles:&nbsp<b><span id="cyc"></span></b>                       
+  <br>Discharge MOSFet Status:&nbsp<b><a id="SDM" href="#" class="nounderline" onclick="SwitchDisChargeMOS();return false;"></a></b>
+  <br>Charge MOSFet Status:&nbsp<b><a id="CHM" href="#" class="nounderline" onclick="SwitchChargeMOS();return false;"></a></b>
+  <br><span id="failure"></span>         
+  <br>BMS Heartbeat:&nbsp<b><span id="hbt"></span></b>
+  <br><br><a href="releasenote.html">FW Version:&nbsp<b><span id="fwv"></span></a></b>
+  <font id="fwAvail"></font>
+  <font id="fwStat"></font>
+  <br><span id="val"></span>
+</div>
+<script>
+var tID=0;
+var gateway=`ws://${window.location.hostname}:${window.location.port}/ws`;
+var websocket,IntervalId;
+var disChargeFetState=0,chargeFetState=0,packWatts=0,fwStatus=1,newFWAvl=0,enMOS=0,wMode=1,fal=0,cellN=0;
+var Clayout=255;
+var onOpenTO=1500;
+var battsNow=[]; 
+var optsDY={
+    angle:0,
+    lineWidth:0.2,
+    radiusScale:0.80,
+    pointer:{
+      length:0.60,
+      strokeWidth:0.053,
+      color:'#15ff00'  
+    },
+    limitMax:false,    
+    limitMin:false,    
+    generateGradient:true,
+    highDpiSupport:true,    
+    percentColors:[[0.0,"#e30e0e"],
+    [0.5,"#e3dc0e"],
+    [0.8,"#cae30e"],
+    [1.0,"#0ee331"]
+   ],   
+    staticLabels:{
+        font:"15px sans-serif", 
+        labels:[0,25,50,75,90,100], 
+        color:"#000000", 
+        fractionDigits:0  
+    },
+};
+window.addEventListener("beforeunload", function () {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        //websocket.send("wclose");
+        websocket.close(3001, "page closing");
+    }
+});
+function closeSocket(){
+  clearInterval(IntervalId);
+  websocket.close(3001,"force");
+}
+function onload(event){ 
+  setTimeout(function(){initWebSocket();},1000);
+  document.getElementById("wbsts").innerHTML="<br><font class=\"blink\"><b>Open Streaming ...</b></font><br>";
+}
+function startSequence(){tID=0;websocket.send("getBMSData 0");}
+function initWebSocket(){
+  console.log('WebSocket Init...');
+  websocket=new WebSocket(gateway);
+  websocket.onopen=onOpen;
+  websocket.onclose=onClose;
+  websocket.onmessage=onMessage;
+  websocket.onerror=onError;
+}
+function onError(event){
+  //console.log('WebSocket Error');
+  clearInterval(IntervalId);
+  setTimeout(function(){window.location.reload();},2000);
+}
+function onOpen(event){
+  startSequence();
+  IntervalId = setInterval(startSequence, 2000);
+}
+function onClose(event){
+  //console.log('WebSocket Closed');
+  clearInterval(IntervalId);
+  if ( event.code !=3001 )
+      setTimeout(function(){window.location.reload();},3000);
+}
+function onMessage(event){
+  console.log(event.data);
+  var myObj=JSON.parse(event.data);
+  var keys;
+  if (myObj) keys=Object.keys(myObj); else return;
+  for (var i=0; i < keys.length; i++){
+      var key=keys[i];      
+      switch (key){
+          case 'soc':var tmpSOC=myObj[key];document.getElementById(key).innerHTML=tmpSOC;setSOC(tmpSOC);break;
+          case 'dfs':disChargeFetState=myObj[key];setCH_DSCH_MosStatus(0);break;             
+          case 'cfs':chargeFetState=myObj[key];setCH_DSCH_MosStatus(1);break;            
+          case 'lic':fwStatus=myObj[key];break;
+          case 'nfa':newFWAvl=myObj[key];break; 
+          case 'ems':enMOS=myObj[key];break;
+          case 'wat':packWatts=myObj[key];break;
+          case 'wmd':wMode=myObj[key];break;            
+          case 'fal':fal=myObj[key];break;
+          case 'cel':cellN=myObj[key];document.getElementById(key).innerHTML=myObj[key];break;
+          case 'lay':Clayout=myObj[key];break;
+          case 'lst':tID=myObj[key];break;
+          case 'bat':battsNow=myObj[key];break;
+          default:const element=document.getElementById(key);if (element) element.innerHTML=myObj[key];break;
+      }
+  }
+  if (tID == 255){updRTdata();} else {websocket.send("getBMSData " + tID);}
+}
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+function SwitchDisChargeMOS(){
+  var urltocall="/SwMOS?switch=dis" + "&set=" + !disChargeFetState ;
+  var msg=disChargeFetState?"OFF":"ON";
+  if (!enMOS){alert("Feature disabled - enable it on MISC page");return;}
+  xmlhttp=new XMLHttpRequest();
+ {
+     if (confirm("Switch " + msg  + " DISCHARGE MOS ?")==true){
+       xmlhttp.open("GET",urltocall,false);
+       xmlhttp.send();
+       disChargeFetState=!disChargeFetState;
+       setCH_DSCH_MosStatus(0);
+       websocket.close();
+     }
+  }
+}
+function SwitchChargeMOS(){
+  var urltocall="/SwMOS?switch=crg" + "&set=" + !chargeFetState ;
+  var msg=chargeFetState?"OFF":"ON";
+  if (!enMOS){alert("Feauture disabled - enable it on MISC page");return;}
+  xmlhttp=new XMLHttpRequest();
+ {
+     if (confirm("Switch " + msg + " CHARGE MOS ?")==true){
+       xmlhttp.open("GET",urltocall,false);
+       xmlhttp.send();
+       chargeFetState=!chargeFetState;
+       setCH_DSCH_MosStatus(1);
+       websocket.close();
+     }
+  }
+}
+function setSOC(theSoc){
+  var target=document.getElementById('SOC'); 
+  var gauge;
+  gauge=new Gauge(target).setOptions(optsDY);
+  gauge.maxValue=100; 
+  gauge.setMinValue(0);  
+  gauge.animationSpeed=1; 
+  gauge.set(theSoc); 
+}
+function setCH_DSCH_MosStatus( ch_dsch ){
+  var theChDisChargMOSStatus;
+  var theChDisChCurrStatus;
+  if (ch_dsch){
+    theChDisChargMOSStatus=document.getElementById('CHM');
+    theChDisChCurrStatus=chargeFetState ;
+  }else{
+    theChDisChargMOSStatus=document.getElementById('SDM');
+    theChDisChCurrStatus=disChargeFetState ;
+  }
+  var DSMText="<font style=\"color:";
+  if ( theChDisChCurrStatus )
+    DSMText +="green;\">ON"; 
+  else
+    DSMText +="red;\">OFF";
+  DSMText +="</font>";
+  theChDisChargMOSStatus.innerHTML=DSMText;
+}  
+function updRTdata(){
+    var element;
+    tID=0;
+    document.getElementById("wbsts").innerHTML="";
+    var theStatus=document.getElementById('packWattStatus');
+    if ( packWatts==0 )
+      theStatus.innerHTML="<font color=\"black\">RELAXING <b>" + packWatts + " W</b></font>";
+    if ( packWatts > 0 )
+      theStatus.innerHTML="<font color=\"green\">CHARGING <b>" + packWatts + " W</b></font>";
+    if ( packWatts < 0 )
+      theStatus.innerHTML="<font color=\"red\">DISCHARGING <b>" + packWatts + " W</b></font>";
+    if (!fwStatus)
+      document.getElementById("fwStat").innerHTML="<br><a id=\"unLicensed\" href=\"license.html\"><font class=\"blink\"><b>ACTIVATE</b></font></a>";
+    else
+      document.getElementById("fwStat").innerHTML="";
+    if (newFWAvl )
+      document.getElementById("fwAvail").innerHTML="<br><a href=\"https://www.dalybmswifi.com/fwrels/\"><font class=\"blink\"><b>NEW FIRMWARE</b></font></a>";    
+
+    var failStr="<a href=\"/bmsalarms\" style=\"color:";
+    if (!fal)
+        failStr+="green\">No Alarms";
+    else
+        failStr+="red\"><b>Alarms</b>";
+    failStr+="</a>";
+    element=document.getElementById("failure");
+    if (element) element.innerHTML=failStr;
+}
+function populateGeo(){
+  var geoStr ="<br>SunRise <b><span id=\"sri\"></span></b> - SunSet <b><span id=\"sst\"></span></b> <span title=\"daylight difference vs yesterday\">(<span id=\"ddu\"></span>s)</span><br><span title=\"click to see a week forecast\"><a href=\"\" onclick=\"openWeatherWindow()\" style=\"text-decoration:none;color:black\"> Today <b><span id=\"wtd\"></span></b></b>  Frcst <b><span id=\"wtm\"></span></b></a></span>";
+  if ( %geo% )
+    document.getElementById("geo").innerHTML=geoStr;
+  else
+    document.getElementById("geo").innerHTML="<br><a href=\"/config\"><font class=\"blink\"><b>SET PLANT COORDINATES TO SYNC TIME</b></font></a>"
+}
+function openWeatherWindow(){
+  if ( wMode )
+    window.open("%weatherLink%","Weather","width=500,height=120");
+}
+window.addEventListener('load',onload());
+openTab('red');
+populateGeo();
+</script>
+</body>
+</html> 
+<!--FFILE-->
+<!--HFILE:graph-rep.html--> 
+<!doctype html><html lang=en><head><meta charset=UTF-8><title>SmartBMS data Extractor Battery Telemetry</title><meta name=viewport content="width=device-width,initial-scale=1"><script src=/HC.js></script><style>
+body{margin:0;font-family:sans-serif;background:#fff;color:#000;transition:.3s}
+header{padding:14px}.title{font-size:1.2rem;font-weight:600;color:#0af;text-transform:uppercase}
+.subtitle{font-size:.85rem;color:#555}#chart{width:100%%;height:70vh}
+.reload{padding:8px;font-size:.8rem;cursor:pointer;color:#f06}
+.packets{padding:8px;font-size:.8rem;color:#555}.status{padding:4px 8px;font-size:.7rem;color:#777}
+.top-right-controls{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:9999;align-items:flex-end}
+.control-row{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#08f}
+.switch{position:relative;width:38px;height:18px;background:#777;border-radius:18px;cursor:pointer;transition:.25s}
+.switch::after{content:"";position:absolute;width:14px;height:14px;background:#fff;border-radius:50%%;top:2px;left:2px;transition:.25s}
+.switch.on{background:#00c8ff}.switch.on::after{left:22px}
+.dark{background:#0b1020!important;color:#e5e9f0!important}
+</style></head>
+
+<body class=light>
+<header><div class=title>Battery Telemetry</div><div class=subtitle>SmartBMS Data Extractor Log Viewer</div></header>
+
+<div class=top-right-controls>
+<div class=control-row><div id=themeLabel>Light Mode</div><div id=themeSwitch class="switch on" onclick=toggleTheme()></div></div>
+<div class=control-row><div id=autoLabel>Auto Reload</div><div id=autoSwitch class=switch onclick=toggleAutoReload()></div></div>
+</div>
+
+<div id=chart></div>
+
+<div style="display:flex;justify-content:space-between;padding:10px;font-size:.8rem;color:#555;gap:20px">
+<div style="flex:1;min-width:140px">
+<button class=reload onclick=triggerFromESP()>Reload</button>
+<div class=packets id=packets>Packets: 0 | 0 KB</div>
+<div class=status id=status></div>
+</div>
+
+<div style="flex:1;min-width:180px;text-align:right">
+<div style=margin-bottom:6px>Power smoothing:<input id=smoothP type=range min=0 max=20 value=0 step=1 style=width:120px><span id=smoothPval>0</span></div>
+<div style=margin-bottom:6px>Vbat smoothing:<input id=smoothV type=range min=0 max=20 value=15 step=1 style=width:120px><span id=smoothVval>15</span></div>
+<div style=margin-bottom:6px>SOC smoothing:<input id=smoothS type=range min=0 max=20 value=15 step=1 style=width:120px><span id=smoothSval>15</span></div>
+<div style=margin-bottom:6px>Delta smoothing:<input id=smoothD type=range min=0 max=20 value=5 step=1 style=width:120px><span id=smoothDval>5</span></div>
+</div>
+</div>
+<script>
+var chart=null,firstInit=!0,autoReload=!1,autoReloadTimer=null,packetCount=0,logBuffer=new Uint8Array(0),
+seriesState=[!0,!1,!1,!1],smoothP=0,smoothV=15,smoothS=15,smoothD=5,logFileSize=0;
+
+function setStatus(e){document.getElementById("status").textContent=e}
+
+function toggleAutoReload(){
+var e=document.getElementById("autoSwitch"),t=document.getElementById("autoLabel");
+(autoReload=e.classList.toggle("on"))?(t.textContent="Auto Reload ON",autoReloadTimer=setInterval(triggerFromESP,6e4)):(t.textContent="Auto Reload",clearInterval(autoReloadTimer),autoReloadTimer=null)
+}
+
+function parseBinaryLog(e){
+var t=new DataView(e.buffer),o=0,a=0,s=0,n=[],r=[],i=[],l=[];
+for(t.byteLength>=6&&65535===t.getUint16(0,!0)&&(a=t.getUint32(2,!0),o=6);o<t.byteLength&&!(o+2>t.byteLength);){
+var h=t.getUint16(o,!0);o+=2;
+var c=h>>13,u=1e3*(a+(s+=8191&h));
+if(0===c){
+if(o+2>t.byteLength)break;
+n.push([u,t.getInt16(o,!0)]),o+=2
+}else{
+if(1!==c)break;
+if(o+6>t.byteLength)break;
+var d=t.getUint8(o);o++;
+var m=t.getUint16(o,!0);o+=2;
+var f=t.getUint16(o,!0);o+=2;o++;
+r.push([u,d]),i.push([u,m]),l.push([u,f/10])
+}}
+return{p:n,s:r,d:i,v:l}
+}
+
+function smoothSeries(e,t){
+if(t<=0||e.length<3)return e;
+let o=[];
+for(let a=0;a<e.length;a++){
+let s=0,n=0;
+for(let o=a-t;o<=a+t;o++)o>=0&&o<e.length&&(s+=e[o][1],n++);
+o.push([e[a][0],s/n])
+}
+return o
+}
+
+function buildDashedSeries(e,t){
+if(e.length<2)return[];
+for(var o=[],a=1;a<e.length;a++){
+var s=e[a-1],n=e[a];
+n[0]-s[0]>3e5&&o.push({name:"gap_"+t,type:"spline",turboThreshold:0,linecap:"round",data:[[s[0]-1,s[1]],s,n],dashStyle:"Dash",color:null,enableMouseTracking:!1,tooltip:{enabled:!1},marker:{enabled:!1},lineWidth:2,animation:!1,showInLegend:!1})
+}
+return o
+}
+
+function updateAxisVisibility(){
+if(chart){
+var e=chart.yAxis;
+e[0].update({title:{text:chart.series.some((e=>"Power"===e.name&&e.visible))?"[W]":""}},!1),
+e[1].update({title:{text:chart.series.some((e=>"Vbat"===e.name&&e.visible))?"[V]":""}},!1),
+e[2].update({title:{text:chart.series.some((e=>"SOC"===e.name&&e.visible))?"%%":""}},!1),
+e[3].update({title:{text:chart.series.some((e=>"Delta"===e.name&&e.visible))?"mV":""}},!1),
+chart.redraw()
+}}
+function createChart(e){
+if(chart){
+seriesState=[];
+for(var t=0;t<chart.series.length;t++)seriesState.push(chart.series[t].visible);
+chart.destroy()
+}
+
+smoothP>0&&(e.p=smoothSeries(e.p,smoothP)),
+smoothV>0&&(e.v=smoothSeries(e.v,smoothV)),
+smoothS>0&&(e.s=smoothSeries(e.s,smoothS)),
+smoothD>0&&(e.d=smoothSeries(e.d,smoothD));
+
+var o=buildDashedSeries(e.p,"power"),
+a=buildDashedSeries(e.v,"vbat"),
+s=buildDashedSeries(e.s,"soc"),
+n=buildDashedSeries(e.d,"delta"),
+r=document.body.classList.contains("dark"),
+i=[];
+
+i.push({name:"Power",type:"spline",data:e.p,yAxis:0,zones:[{value:0,color:"#ff4444"},{color:"#22cc22"}]}),
+o.forEach(e=>i.push(e)),
+i.push({name:"Vbat",type:"spline",data:e.v,yAxis:1,color:"#fdd835",visible:!1}),
+a.forEach(e=>i.push(e)),
+i.push({name:"SOC",type:"spline",data:e.s,yAxis:2,color:"#a855f7",visible:!1}),
+s.forEach(e=>i.push(e)),
+i.push({name:"Delta",type:"spline",data:e.d,yAxis:3,color:"#f97316",visible:!1}),
+n.forEach(e=>i.push(e));
+
+chart=Highcharts.chart("chart",{
+chart:{backgroundColor:r?"#0b1020":"#fff",zoomType:"x",marginTop:50},
+accessibility:{enabled:!1},
+legend:{enabled:!0,useHTML:!0,itemStyle:{color:r?"#e5e9f0":"#000"},labelFormatter:function(){return this.name.startsWith("gap_")?"":this.name}},
+title:{text:""},
+credits:{enabled:!0},
+xAxis:{type:"datetime",labels:{style:{color:r?"#aaa":"#000"}}},
+plotOptions:{spline:{linecap:"round",animation:!1,softThreshold:!0,tension:.45},series:{turboThreshold:0,stickyTracking:!1,marker:{enabled:!1},lineWidth:2}},
+yAxis:[
+{title:{text:"[W]",rotation:0,align:"high",y:-5,x:10,style:{color:"#38bdf8",fontSize:"11px"}},labels:{style:{color:"#38bdf8",fontSize:"10px"}},offset:10},
+{title:{text:"Vbat",rotation:0,align:"low",y:20,x:10,style:{color:"#22c55e",fontSize:"11px"}},labels:{style:{color:"#22c55e",fontSize:"10px"}},offset:50},
+{title:{text:"SOC",rotation:0,align:"high",y:-5,x:-10,style:{color:"#a855f7",fontSize:"11px"}},labels:{style:{color:"#a855f7",fontSize:"10px"}},opposite:!0,offset:10},
+{title:{text:"Delta",rotation:0,align:"low",y:20,x:-10,style:{color:"#f97316",fontSize:"11px"}},labels:{style:{color:"#f97316",fontSize:"10px"}},opposite:!0,offset:50}
+],
+tooltip:{shared:!1,useHTML:!1,crosshairs:!0,snap:0,formatter:function(){
+if(this.series.name.startsWith("gap_"))return!1;
+var e="Power"===this.series.name?" W":"Vbat"===this.series.name?" V":"SOC"===this.series.name?" %%":"Delta"===this.series.name?" mV":"";
+return Highcharts.dateFormat("%%H:%%M:%%S",this.x)+" | "+this.series.name+": "+this.y.toFixed(1)+e
+}},
+series:i
+});
+
+chart.series.forEach(e=>{e.update({events:{show:updateAxisVisibility,hide:updateAxisVisibility}},!1)});
+updateAxisVisibility();
+
+if(firstInit){
+chart.series.forEach(e=>{"Power"===e.name||"gap_power"===e.name?e.show():e.hide()});
+firstInit=!1
+}else{
+for(t=0;t<chart.series.length;t++)seriesState[t]?chart.series[t].show():chart.series[t].hide()
+}
+}
+
+function toggleTheme(){
+var e=document.getElementById("themeSwitch"),t=document.getElementById("themeLabel");
+e.classList.toggle("on")?(document.body.classList.remove("dark"),t.textContent="Light Mode"):(document.body.classList.add("dark"),t.textContent="Dark Mode"),
+createChart(parseBinaryLog(logBuffer))
+}
+
+function openWsOnce(){
+setStatus("Opening WebSocket...");
+logBuffer=new Uint8Array(0);
+packetCount=0;
+document.getElementById("packets").textContent="Packets: 0 | 0 KB";
+
+var e=new WebSocket("ws://"+location.host+"/ws");
+e.binaryType="arraybuffer";
+
+e.onopen=function(){e.send("GET_LOG")};
+
+e.onmessage=function(t){
+if("#END"===t.data){
+createChart(parseBinaryLog(logBuffer));
+e.close();
+return;
+}
+const msg = String(t.data);
+if (msg.startsWith("#LSIZE:")) {logFileSize = parseInt(msg.substring(7), 10);}
+if(t.data instanceof ArrayBuffer){
+var o=new Uint8Array(t.data),a=new Uint8Array(logBuffer.length+o.length);
+a.set(logBuffer);
+a.set(o,logBuffer.length);
+logBuffer=a;
+packetCount++;
+var kb=(logBuffer.length/1024).toFixed(1);
+var prg = ((logBuffer.length/logFileSize) * 100).toFixed(0) + "%";
+document.getElementById("packets").textContent="Packets: "+packetCount+" | "+kb+" KB "+prg;
+logFileSize
+}
+};
+
+e.onerror=function(){setStatus("WebSocket Error")};
+e.onclose=function(){setStatus("WebSocket Closed")};
+}
+
+function triggerFromESP(){
+fetch("/openws?rand="+Math.random())
+.then(e=>e.text())
+.then(js=>eval(js));
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+document.getElementById("smoothP").oninput=function(){smoothP=parseInt(this.value);document.getElementById("smoothPval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
+document.getElementById("smoothV").oninput=function(){smoothV=parseInt(this.value);document.getElementById("smoothVval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
+document.getElementById("smoothS").oninput=function(){smoothS=parseInt(this.value);document.getElementById("smoothSval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
+document.getElementById("smoothD").oninput=function(){smoothD=parseInt(this.value);document.getElementById("smoothDval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
+setTimeout(triggerFromESP,500);
+});
+</script>
+</body></html>
+
+<!--FFILE-->
+<!--HFILE:IoTMQTTPanel.html--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSON IoTMQTTPanel Trimmer</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 16px;
+    max-width: 900px;
+}
+h2, h3 {
+    margin-top: 10px;
+}
+button {
+    margin-top: 12px;
+    padding: 10px 16px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 240px;
+}
+pre {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 6px;
+    max-height: 400px;
+    overflow: auto;
+    font-size: 14px;
+}
+img {
+    margin-top: 20px;
+    border-radius: 6px;
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+}
+@media (min-width: 600px) {
+    button {
+        width: auto;
+    }
+    pre {
+        font-size: 15px;
+    }
+}
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<h2>JSON IoTMQTTPanel Trimmer</h2>
+<button id="btnDownload">Download</button>
+<h3>Output JSON (non-minified):</h3>
+<pre id="out"></pre>
+<p>Example of panel layout generated by the dongle</p>
+<img src="https://dalybmswifi.com/img/iotMQTT_Panel.jpg" alt="iotMQTTPanel in action">
+<script>
+function randomClientID(len=8) {
+    const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let out="";
+    for (let i=0;i<len;i++) out+=chars.charAt(Math.floor(Math.random()*chars.length));
+    return out;
+}
+let numOfBatts=%numberOfCells%;
+const mqttJsonTopic="%mqttJsonTopic%";
+const mqttClientID=randomClientID(8);
+const mqttServer="%mqttServer%";
+const mqttPort=%mqttPort%;
+const mqttSecText="%mqttSecText%";
+const mqttUserName="%mqttUserName%";
+const mqttPassword="%mqttPassword%";
+let mqttRefresh=%mqttRefresh%;
+const mqttMOS=("%enMOS%"=="checked")?1:0;
+if (mqttRefresh<60) mqttRefresh=60;
+function applyTagReplacements(content) {
+    content=content.replaceAll("*!mqttJsonTopic*!",mqttJsonTopic);
+    content=content.replaceAll("*!mqttClientID*!",mqttClientID);
+    content=content.replaceAll("*!mqttServer*!",mqttServer);
+    content=content.replaceAll("*!mqttPort*!",mqttPort);
+    content=content.replaceAll("*!mqttSecText*!",mqttSecText);
+    content=content.replaceAll("*!mqttUserName*!",mqttUserName);
+    content=content.replaceAll("*!mqttPassword*!",mqttPassword);
+    content=content.replaceAll("*!mqttRefresh*!",mqttRefresh);
+    content=content.replaceAll("*!numberOfCells*!",numOfBatts);
+    return content;
+}
+function trimAllBatteriesPanelsImmutable(json,num) {
+    return {
+        ...json,
+        panels: json.panels.map(p => {
+            if (typeof p.panelName==="string" &&
+                p.panelName.toLowerCase().includes("batteries") &&
+                Array.isArray(p.comboItemList)) {
+                return { ...p, comboItemList: p.comboItemList.slice(0,num) };
+            }
+            return p;
+        })
+    };
+}
+function minifyJson(input) {
+    const obj=(typeof input==="string")?JSON.parse(input):input;
+    return JSON.stringify(obj);
+}
+function downloadFile(text,filename) {
+    const blob=new Blob([text],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+document.addEventListener("DOMContentLoaded",() => {
+    document.getElementById("btnDownload").addEventListener("click",async() => {
+        const num=numOfBatts;
+        try {
+            const resp=await fetch("./IoTMQTTPanel.json.gz");
+            const compressed=new Uint8Array(await resp.arrayBuffer());
+            let content=pako.ungzip(compressed,{to:"string"});
+            content=applyTagReplacements(content);
+            const original=JSON.parse(content);
+            const trimmed=trimAllBatteriesPanelsImmutable(original,num);
+            document.getElementById("out").textContent=JSON.stringify(trimmed,null,2);
+            const minified=minifyJson(trimmed);
+            downloadFile(minified,"IoTMQTTPanel.json");
+        } catch(e) {
+            document.getElementById("out").textContent="Error loading or parsing JSON: "+e;
+        }
+    });
+});
+</script>
+</body>
+</html>
+<!--FFILE-->
+<!--HFILE:license.html--> 
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>ScanLabs SMART BMS DATA EXTRACTOR</title>
+  <style>
+    body { min-width:310px; max-width:1000px; height:400px; margin:0 auto; font-family:"Lato",sans-serif; }
+    h2 { font-family:Arial; font-size:2.5rem; text-align:center; }
+    .tablink { background:#e0e0e0; color:#333; float:left; border:none; border-radius:10px; cursor:pointer; padding:6px 12px; font-size:11px; font-weight:600; width:20%%; margin:3px 0; text-align:center; transition:background .25s,transform .25s,box-shadow .25s; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+    .tablink:hover { background:#d5d5d5; transform:translateY(-2px); box-shadow:0 2px 4px rgba(0,0,0,.12); }
+    .tablink.active { background:#00978f; color:#fff; transform:translateY(-2px); box-shadow:0 2px 4px rgba(0,0,0,.15); }
+    .tabcontent { color:#000; display:none; padding:20px; text-align:center; }
+    .btn-group button { background-color:#04AA6D; border:1px solid green; color:white; padding:10px 24px; cursor:pointer; float:left; }
+    .btn-group:after { content:""; clear:both; display:table; }
+    .btn-group button:not(:last-child) { border-right:none; }
+    .btn-group button:hover { background-color:#3e8e41; }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <button class="tablink" onclick="window.location.href='/'">Status</button>
+  <button class="tablink" onclick="window.location.href='/batt'">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph'">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config'" id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade'">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+  <div style="margin:15px;">
+    <center><b>LICENCE...unlock your fully unlimited SW with a small one-time support ;-)</b></center>
+    <hr>
+    <p><strong>Want a FULL LICENSE for FREE ?</strong> Publish comments/experience/videos and <b>links</b> on your social channel(s), send an email with evidences. <a href="mailto:info@dalybmswifi.com?subject=EVIDENCES of SOCIAL sharing&body=Following the evidences of sharing for activating the Dongle ID  %platformMAC%">SHARE AND GET YOUR LIFETIME FREE LICENSE</a></p>
+    <p>With licensed sw, you have access to the <strong>full-featured release</strong></p>
+    <ol>
+      <li><strong>BMS Update</strong> rate down to <strong>1s</strong></li>
+      <li><strong>Battery Graphs</strong>, 6 months visibility, CSV download</li>
+      <li><strong>MQTT</strong> Publish time down to <strong>5s</strong></li>
+      <li><strong>MODBUS-TCP SERVER</strong> all registers updated time is <strong>1s</strong></li>
+      <li><strong>MODBUS-TCP CLIENT</strong> all registers updated time is <strong>configurable</strong></li>
+      <li><strong>PUSH SERVICES</strong> full featured; push services, all Reports, all failures</li>
+      <li><strong>HOSTNAME</strong> fully configurable</li>
+      <li><strong>COLOR DISPLAY DASHBOARD ID</strong> free DashBoard ID and Name</li>
+      <li><strong>UART TUNNEL</strong> Full featured with 90s inactivity timeout window</li>
+      <li><strong>CHARGING/DISCHARGING MOS</strong> You can decide to manage them via WEB pages or MQTT</li>
+    </ol>
+    <p><strong>Unlicensed</strong> sw is FULL-functional with some limitations:</p>
+    <ol>
+      <li><strong>BMS Update</strong> the quickest Polling rate is <strong>60s</strong></li>
+      <li><strong>Battery Graphs</strong> are all stored but only the <strong>current month</strong> is visible – <strong>no CSV</strong> download</li>
+      <li><strong>MQTT</strong> the quickest Publish time is <strong>60s</strong></li>
+      <li><strong>MODBUS-TCP SERVER</strong> the quickest full register-set Update time is <strong>60s</strong></li>
+      <li><strong>MODBUS-TCP CLIENT</strong> the quickest Update time is <strong>60s</strong></li>
+      <li><strong>PUSH SERVICES</strong> sunrise/sunset Report are sent – <strong>no Alarms</strong> sent</li>
+      <li><strong>HOSTNAME</strong> fixed to SmatBMS</li>
+      <li><strong>COLOR DISPLAY DASHBOARD ID</strong> fixed to DashBoard ID = 1 without DashBoard Name → ONLY one BMS can be shown on the display</li>
+      <li><strong>UART TUNNEL</strong> Full featured with 10s inactivity timeout window</li>
+      <li><strong>CHARGING/DISCHARGING MOS</strong> management Not Supported either via WEB and MQTT</li>
+    </ol>
+    <p>You can request a <i><strong>FOUR weeks free license</strong></i> for testing the platform. <a href="mailto:info@dalybmswifi.com?subject=LICENCE four weeks free test Request&body=Dongle ID  %platformMAC%">ASK FOR YOUR FREE TRIAL</a></p>
+    <p><strong>Full featured</strong> SW unlocked with a <strong>single contribution</strong> forever <a href="mailto:info@dalybmswifi.com?subject=LICENCE FULL Info Request&body=Dongle ID %platformMAC%">ACTIVATE YOUR FULL LICENSE</a></p>
+    <div class="btn-group"><button onclick="window.location.href='config'">BACK to CONFIG</button></div>
+  </div>
+  <script>
+    function openTab(color) {
+      var i, tabcontent, tablinks, boxName;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].style.backgroundColor = "";
+      }
+      boxName = document.getElementById("defaultOpen").textContent;
+      document.getElementById(boxName).style.display = "block";
+      document.getElementById("defaultOpen").style.backgroundColor = color;
+    }
+
+  </script>
+  <script data-name="BMC-Widget" data-cfasync="false"
+    src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+    data-id="scanlabs"
+    data-description="Support me on Buy me a coffee!"
+    data-message="Thank you so much for supporting my work, it truly means a lot !"
+    data-color="#FF813F"
+    data-position="Right"
+    data-x_margin="18"
+    data-y_margin="18"
+    id="bmcWidget">
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const w = document.getElementById("bmcWidget");
+      if (!w) return;
+      w.setAttribute("data-position", "Right-Bottom");
+      openTab('red');
+    });
+  </script>
+</body>
+</html>
+<!--FFILE-->
+<!--HFILE:misc-rep.html--> 
+<!DOCTYPE HTML><html>
+<head>
+<title>ScanLabs SMART BMS DATA EXTRACTOR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{min-width:310px;max-width:1000px;height:400px;margin:0 auto;font-family:"Lato",sans-serif;}
+h2{text-align:center;font-family:Arial;font-size:2.5rem;}
+.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:.25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{display:none;padding:20px;text-align:center;}
+.btn-group button{background:#04AA6D;border:1px solid green;border-radius:12px;margin:4px 2px;color:#fff;padding:10px 24px;cursor:pointer;float:left;}
+.btn-group button:hover{background:#3e8e41;}
+#unLicensed{color:red;text-decoration:none}
+.dipWrap{display:flex;align-items:center;gap:6px;}
+.dipBox{
+  width:20px;height:35px;border:2px solid #333;border-radius:4px;
+  background:#f0f0f0;position:relative;display:flex;
+  justify-content:center;align-items:flex-end;padding-bottom:3px;
+  font-size:10px;font-weight:bold;color:#333;cursor:pointer;
+  user-select:none;
+}
+.dipLever{
+  width:13px;height:14px;background:#ccc;border:2px solid #333;
+  border-radius:3px;position:absolute;left:50%%;
+  transform:translateX(-50%%);transition:.2s;
+}
+.dipOn .dipLever{top:3px;background:#00978f;border-color:#006b66;}
+.dipOff .dipLever{bottom:3px;background:#ddd;}
+#dipContainer{display:flex;gap:12px;justify-content:center;margin-top:10px;}
+.dipLabel{font-size:10px;font-weight:bold;color:#333;}
+</style>
+</head>
+<script>
+let initialProt = null;
+let initialID = null;
+function submitMessage(){
+  let prot = document.getElementById("bmsProt")?.value;
+  let id   = document.getElementById("bmsdID")?.value;
+  if (initialProt !== null && initialID !== null) {
+    if (prot != initialProt || id != initialID) {
+      alert("! A dongle reset/restart is required for the changes to take effect !");
+    }
+  }
+  setTimeout(()=>{location.reload()},2000);
+}
+function openTab(c){
+  [...document.getElementsByClassName("tabcontent")].forEach(e=>e.style.display="none");
+  [...document.getElementsByClassName("tablink")].forEach(e=>e.style.backgroundColor="");
+  let box=document.getElementById("defaultOpen").textContent;
+  document.getElementById(box).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=c;
+}
+function setSOC(){
+  let v=document.getElementById("cSOC").value;
+  if(!v) return;
+  let x=new XMLHttpRequest();
+  x.open("GET","/setmisc?sSOC="+v,false); x.send();
+  setTimeout(()=>location.reload(),2000);
+}
+</script>
+<body>
+<button class="tablink" onclick="location.href='/'">Status</button>
+<button class="tablink" onclick="location.href='/batt'">Battery</button>
+<button class="tablink" onclick="location.href='/graph'">Monitor</button>
+<button class="tablink" onclick="location.href='/config'" id="defaultOpen">Settings</button>
+<button class="tablink" onclick="location.href='/fwupgrade'">Upgrade</button>
+<div id="Settings" class="tabcontent"></div>
+<div style="margin:15px;">
+<br><center><b>MISC CONFIG</b></center><br>
+<center>%getFreeHeap% Bytes</center>
+<center><font id="fwStat"></font></center><br>
+<hr><br>
+<form action="/getmisc" target="hidden-form">
+<span title="Midnight System Reset">MidNight SYS Reset: <input type="checkbox" name="inputSYSRES" %inputSYSRES%></span><br>
+<span title="BMS Reset when communication error">BMS Reset: <input type="checkbox" name="inputBMSRES" %inputBMSRES%></span><br>
+<span title="Reset on Missing Wireless">Wireless SYS Reset: <input type="checkbox" name="inputSYSRESW" %inputSYSRESW%></span><br>
+<span title="Reset Button to switch to AP/Factory">Enable Reset button: <input type="checkbox" name="SysResToAP" %SysResToAP%></span><br>
+<span title="Firmware Automatic Upgrade">Auto FW Upgrade: <input type="checkbox" name="SysOTA" %SysOTA%></span><br><br>
+<span title="Enable JK Layout">JK Layout: <input type="checkbox" name="sysLyt" %sysLyt%></span><br><br>
+<span title="Enable Setting MOS Switches">MOS Managment: <input type="checkbox" name="enMOS" %enMOS%></span><br>
+<p id="bmsfeature"></p>
+<span title="BMS Refresh in seconds it is suggested to set >5s">
+BMS Data Refresh [s] <input type="number" min="1" max="300" step="1" name="bmsRefresh" id="bmsRefresh" value="%bmsRefresh%">
+</span>
+<span id="mSOC"></span><br><br>
+<input type="submit" value="Submit" onclick="submitMessage()"><br><br>
+</form>
+<hr><br>
+<div class="btn-group"><button onclick="location.href='config'">BACK to CONFIG</button></div>
+<iframe style="display:none" name="hidden-form"></iframe>
+</div>
+<script>
+if(!%fwStatus%){
+  bmsRefresh.disabled=true;
+  fwStat.innerHTML="<br><a id='unLicensed' href='license.html'><b>ACTIVATE</b></a><br>";
+}
+if(%bmsKind%==0){
+  let t="<span title='Daly Protocol type1 (newer) or type0'>DALY Protocol: <select name='bmsProt' id='bmsProt'>\
+  <option value='0'> Former Protocol </option>\
+  <option value='1'> Newer Protocol </option></select></span><br>\
+  <span title='Enable passthrough between DALY bluetooth/WiFi dongle and BMS'>BMS Passthrough: <input type='checkbox' name='inputBMSREP' %inputBMSREP%></span><br>";
+  if(%hasLog%) t+="<span title='Enable BMS logger'>BMS Log: <input type='checkbox' name='inputBMSLOG' %inputBMSLOG%></span><br>";
+  bmsfeature.innerHTML=t;
+  mSOC.innerHTML="<br><span title='Set Current SOC 0-100'>Current SOC <input type='number' min='0' max='100' id='cSOC'></span>\
+  &emsp;<input type='button' onclick='setSOC()' value='set SOC'><br>";
+}else{
+  let t="<span title='Select the same JK Protocol on the dongle and BMS'>JK Protocol: <select name='bmsProt' id='bmsProt'>\
+  <option value='0'>000 - 4G-GPS Remote module Common protocol V4.2</option>\
+  <option value='1'>001 - JK BMS RS485 Modbus V1.0</option>\
+  <option value='2'>002 - JK BMS CAN</option></select></span><br>";
+  t+="<div style='display:flex; align-items:center; gap:20px; justify-content:flex-start; margin-top:10px;'>\
+        <span title='Select JK Device ID (0–15)'>JK Device ID: \
+          <input type='number' min='0' max='15' name='bmsdID' id='bmsdID' value='%bmsdID%' oninput='updateDipSwitches()'>\
+        </span>\
+        <div id='dipContainer' style='display:flex; flex-direction:row; gap:10px;'>\
+          <div class='dipBox dipOff' id='dip1' onclick='toggleDip(1)'><div class='dipLever'></div>1</div>\
+          <div class='dipBox dipOff' id='dip2' onclick='toggleDip(2)'><div class='dipLever'></div>2</div>\
+          <div class='dipBox dipOff' id='dip3' onclick='toggleDip(3)'><div class='dipLever'></div>3</div>\
+          <div class='dipBox dipOff' id='dip4' onclick='toggleDip(4)'><div class='dipLever'></div>4</div>\
+        </div>\
+        <div class='dipLabelSide' style='margin-left:10px; display:flex; flex-direction:column; justify-content:space-between; height:40px;'>\
+          <span>ON</span>\
+          <span>OFF</span>\
+        </div>\
+      </div><br>";
+  bmsfeature.innerHTML=t;
+}
+openTab('red');
+bmsProt.value="%bmsProt%";
+function toggleDip(n){
+  let dip=document.getElementById("dip"+n);
+  dip.classList.toggle("dipOn");
+  dip.classList.toggle("dipOff");
+
+  let val=0;
+  for(let i=0;i<4;i++){
+    let d=document.getElementById("dip"+(i+1));
+    if(d.classList.contains("dipOn")) val|=(1<<i);
+  }
+  document.getElementById("bmsdID").value=val;
+}
+function updateDipSwitches(){
+  let id=parseInt(document.getElementById("bmsdID").value);
+  if(isNaN(id)||id<0||id>15) return;
+
+  for(let i=0;i<4;i++){
+    let dip=document.getElementById("dip"+(i+1));
+    if(id&(1<<i)){
+      dip.classList.add("dipOn"); dip.classList.remove("dipOff");
+    }else{
+      dip.classList.add("dipOff"); dip.classList.remove("dipOn");
+    }
+  }
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  updateDipSwitches();
+  initialProt = document.getElementById("bmsProt")?.value;
+  initialID   = document.getElementById("bmsdID")?.value;
+});
+</script>
+</body>
+</html>
+<!--FFILE-->
+<!--HFILE:modbustcp.html--> 
+<!DOCTYPE HTML><html>
+<head>
+  <title>SmartBMS WiFi</title>    
+  <style>
+body {
+ min-width: 310px;
+ max-width: 1000px;
+ height: 400px;
+ margin: 0 auto;
+ font-family: "Lato", sans-serif;
+}
+h2 {
+ font-family: Arial;
+ font-size: 2.5rem;
+ text-align: center;
+}
+.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{color:#000;display:none;padding:20px;text-align:center}
+.btn-group button {
+  background-color: #04AA6D; 
+  border: 1px solid green; 
+  border-radius: 12px;
+  margin: 4px 2px;
+  color: white; 
+  padding: 10px 24px; 
+  cursor: pointer; 
+  float: left; 
+}
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.btn-group button:not(:last-child) {
+  border-right: none; 
+}
+.btn-group button:hover {
+  background-color: #3e8e41;
+}
+#unLicensed {color: red;background-color: transparent;text-decoration:none;}
+</style>  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<script>
+function submitMessage() {
+  modBusConfig(0);
+  setTimeout(function(){ document.location.reload(false); }, 2000);
+}
+function modBusConfig( extcomp ){ //1-extract 0-compress & send
+  let modBusCfg=%mbCfg%;  
+  let tmpStr="";
+  if ( modBusCfg&1<<5 ) tmpStr="Active"; else tmpStr="Sleeping";
+  document.getElementById("ServStat").innerHTML=tmpStr;
+  if ( modBusCfg&1<<6 ) tmpStr="Active"; else tmpStr="Sleeping";
+  if ( modBusCfg&1<<7 ) tmpStr="Missing/Bad json";
+  document.getElementById("CliStat").innerHTML=tmpStr; 
+  if ( extcomp ){
+    document.getElementById("mbSEn").checked=(modBusCfg & 0x01)?1:0;
+    document.getElementById("mbSWF").checked=(modBusCfg & 0x02)?1:0;
+    document.getElementById("mbCEn").checked=(modBusCfg & 0x04)?1:0;
+  }else{
+    modBusCfg = document.getElementById("mbSEn").checked?(1<<0):0;
+    modBusCfg+= document.getElementById("mbSWF").checked?(1<<1):0;
+    modBusCfg+= document.getElementById("mbCEn").checked?(1<<2):0;
+
+    var urltocall="/get_mb?mbCfg="+modBusCfg;
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open("GET", urltocall, false);
+    xmlhttp.send();
+  }
+}
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+function checkMQTT(){
+  if ( %mqttPublishEnable% && (document.getElementById("mbSEn").checked == true || document.getElementById("mbCEn").checked == true) )
+    alert("Due to low memory resource it is NOT recommended to have MQTT and MODBUS both active");
+}
+</script>
+<body>
+  <button class="tablink" onclick="window.location.href='/';">Status</button> 
+  <button class="tablink" onclick="window.location.href='/batt';">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph';">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config';"  id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade';">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+  <div style='margin:15px;'><br><center><b>MODBUS TCP CONFIG</center></b>
+  <center><font id="fwStat"></font></center><br> 
+  <hr><br>
+  <table style="height: 100%%;" border="0">
+  <tbody>
+  <tr style="height: 40px;">
+  <td style="width: 45%%; height: 40px;"><form action="/get_mb" target="hidden-form">
+  <span title="Enable MODBUS TCP">MODBUS TCP SERVER: <input id="mbSEn" name="mbSEn" type="checkBox" /><br /><span title="Swap H-L Words on Float">SWAP FLOAT: <input id="mbSWF" name="mbSWF" type="checkBox" /></span></span></td>
+  <td style="width: 33%%; height: 40px;">STATUS: <span id="ServStat"></span></td>
+  <td style="width: 33%%; height: 40px;"><a href="mbtcpInfo">ModBus REGISTER MAP</a></td>
+  </tr>
+  <tr style="height: 51px;">
+  <td style="height: 51px;"><form action="/get_mb" target="hidden-form"><br /><span title="Enable MODBUS TCP">MODBUS TCP CLIENT: <input id="mbCEn" name="mbCEn" type="checkBox" /></span><br /><br /></form></td>
+  <td style="height: 51px;">STATUS: <span id="CliStat"></td>
+  <td style="height: 51px;"><a href="mbCliInfo">ModBus CLIENT Json</a></td>
+  </tr>
+  <tr style="height: 21px;">
+  <td style="height: 21px;"><input type="submit" value="Submit" onclick="submitMessage()">
+  </form></td>
+  <td style="height: 21px;">&nbsp;</td>
+  <td style="height: 21px;">&nbsp;</td>
+  </tr>
+  </tbody>
+  </table>  
+  <hr><br>  
+  <div class="btn-group">
+    <button onclick="window.location.href='config';">BACK to CONFIG</button>
+    <button onclick="window.location.href='https://www.dalybmswifi.com/images/';"> MODBUSTCP MANUAL </button>
+  </div>
+  <iframe style="display:none" name="hidden-form"></iframe>
+  </div>
+  <script>
+    openTab('red');
+    if ( !%fwStatus% ){
+      document.getElementById("fwStat").innerHTML = "<br><a id=\"unLicensed\" href=\"license.html\"><b>ACTIVATE</b></a><br>";
+     }
+    modBusConfig(1);
+  </script>
+</body></html>
+
+<!--FFILE-->
+<!--HFILE:mqtt.html--> 
+<!doctype html><html>
+<head>
+<title>SmartBMS WiFi</title>
+<style>body{min-width:310px;max-width:1000px;height:400px;margin:0 auto;font-family:Lato,sans-serif}h2{font-family:Arial;font-size:2.5rem;text-align:center}.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08)}.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12)}.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15)}.tabcontent{color:#000;display:none;padding:20px;text-align:center}.btn-group button{background-color:#04aa6d;border:1px solid green;border-radius:12px;margin:4px 2px;color:#fff;padding:10px 24px;cursor:pointer;float:left}.btn-group:after{content:"";clear:both;display:table}.btn-group button:not(:last-child){border-right:none}.btn-group button:hover{background-color:#3e8e41}#unLicensed{color:red;background-color:transparent;text-decoration:none}.pwd-box{position:relative;display:inline-block}.pwd-box input{padding-right:32px}.togglePwd{position:absolute;right:6px;top:50%%;transform:translateY(-50%%);cursor:pointer;user-select:none}.mqttBox{width:18px;height:18px;border-radius:4px;background:none;border:1px solid #333}.mqttBoxWrapper{display:flex;flex-direction:column;align-items:center;margin-right:10px;position:relative}.mqttLabel{font-size:11px;font-weight:700;margin-bottom:3px}.mqttBoxWrapper:hover .tooltip{opacity:1;visibility:visible;transform:translate(-50%%,-5px)}.tooltip{position:absolute;bottom:35px;left:50%%;transform:translateX(-50%%);background:#333;color:#fff;padding:4px 8px;border-radius:4px;font-size:11px;white-space:nowrap;opacity:0;visibility:hidden;transition:.2s ease;pointer-events:none;z-index:10}</style>
+<meta name=viewport content="width=device-width,initial-scale=1">
+</head>
+<body>
+<button class=tablink onclick='window.location.href="/"'>Status</button>
+<button class=tablink onclick='window.location.href="/batt"'>Battery</button>
+<button class=tablink onclick='window.location.href="/graph"'>Monitor</button>
+<button class=tablink onclick='window.location.href="/config"' id=defaultOpen>Settings</button>
+<button class=tablink onclick='window.location.href="/fwupgrade"'>Upgrade</button>
+<div id=Settings class=tabcontent></div>
+<div style=margin:15px><br><center><b>MQTT CONFIG</b></center>
+<center><font id="fwStat"><br><a id=unLicensed href="license.html"><b>Sync with Server</b></a><br></font></center><br><hr>
+<div style="display:flex;justify-content:center;align-items:center;gap:12px;margin:10px 0;">
+    <div class="mqttBoxWrapper" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="mqttLabel">EN</div>
+        <div id="boxEnabled" class="mqttBox"></div>
+        <div class="tooltip">MQTT enabled</div>
+    </div>
+    <div class="mqttBoxWrapper" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="mqttLabel">CN</div>
+        <div id="boxConnected" class="mqttBox"></div>
+        <div class="tooltip">Broker Connected</div>
+    </div>
+    <div class="mqttBoxWrapper" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="mqttLabel">SB</div>
+        <div id="boxSubscr" class="mqttBox"></div>
+        <div class="tooltip">Subscribing Active</div>
+    </div>
+    <div class="mqttBoxWrapper" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="mqttLabel">TX</div>
+        <div id="boxPub" class="mqttBox"></div>
+        <div class="tooltip">Last Publish Status</div>
+    </div>
+    <div class="mqttBoxWrapper" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="mqttLabel">HA</div>
+        <div id="boxHADisc" class="mqttBox"></div>
+        <div class="tooltip">Home Assistant Disocvery Ready to be sent</div>
+    </div>
+    <input id="nextPub" readonly
+           title="Seconds to next MQTT Publish"
+           style="width:55px;text-align:center;border:1px solid #ccc;border-radius:6px">
+</div>
+<hr><br>
+<div style="display:flex;justify-content:flex-start;gap:10px;margin-top:12px;">
+    <button id="btnTestMQTT" disabled onclick='ws.send("testMQTT")'>Test MQTT</button>
+    <button id="btnHADisc" disabled
+        onclick='alert("HA Discovery will be sent within 30s"); ws.send("haDiscovery");'>
+        Generate Home Assistant Discovery
+    </button>
+</div>
+<br><hr><br>
+<form action=/get_mqtt target=hidden-form>
+<input type="hidden" id="mqttFlags" name="mqttPublishFlags" value=%mqttPublishFlags%>
+MQTT Server:
+<div class=pwd-box>
+<input type=password name=mqttServer id=mS value=%mqttServer% maxlength=128 size=5 oninput=ckFieldSize()>
+<span class=togglePwd onclick='togglePwd("mS",this)'><svg width=20 height=20 viewBox="0 0 24 24"><path fill=#444 d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg></span>
+</div><br>
+MQTT PORT: <input type=number maxlength=4 max=65535 min=1 step=1 name=mqttPort value=%mqttPort%> Use TLS: <span title="Secure MQTT through TLS"><input type=checkBox name=mqttSec %mqttSec%></span><br>
+MQTT User Name:
+<div class=pwd-box>
+<input type=password name=mqttUserName id=mUN value=%mqttUserName% maxlength=24 size=5 oninput=ckFieldSize()>
+<span class=togglePwd onclick='togglePwd("mUN",this)'><svg width=20 height=20 viewBox="0 0 24 24"><path fill=#444 d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg></span>
+</div><br>
+MQTT Password:
+<div class=pwd-box>
+<input type=password name=mqttPassword id=mP value=%mqttPassword% maxlength=24 size=5 oninput=ckFieldSize()>
+<span class=togglePwd onclick='togglePwd("mP",this)'><svg width=20 height=20 viewBox="0 0 24 24"><path fill=#444 d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg></span>
+</div><br>
+MQTT Client ID: <input name=mqttClientID id=mC value=%mqttClientID% maxlength=24 size=5 oninput=ckFieldSize()><br><br><hr>
+<table><tbody>
+<tr><td style=width:30%%>
+<input type=hidden id=mqttJSON name=mqttJSON value=%mqttJSON%>
+<span title="Enable MQTT">Enable MQTT: <input type=checkBox id=mqttPublishEnable name=mqttPublishEnable %mqttPublishEnable% onclick=checkModBusTCP()></span><br>
+<span title="export MQTT data as json format type1=batteries as JSON array, type=batteries as list">Export as:<br>&emsp;Flat1<input type=checkBox id=mqttFLAT1 onclick=handleCheck(3)>&emsp;Json1<input type=checkBox id=mqttJSON1 onclick=handleCheck(1)>&emsp;Json2<input type=checkBox id=mqttJSON2 onclick=handleCheck(2)></span><br>
+<span title="mqtt refresh time in seconds. MUST BE Larger than BMS Polling time">Publish Refresh [s] : <input type=number maxlength=3 max=600 min=5 step=5 name=mqttRefresh id=mqttRefresh value=%mqttRefresh% disabled></span><br>
+<span title="Publish All Batteries [mV]">Publish Pack BATT : <input type=checkbox id=ShowBAT onclick=handleCheck(this)
+tooltip_mqtt_soc="All Batteries comma separated"></span><br>
+<span title="Publish All Resistances [mOhm]">Publish Pack RES : <input type=checkbox id=ShowRES onclick=handleCheck(this)
+tooltip_mqtt_soc="All Resistances comma separated"></span><br>
+<span title="Publish Status of Charge">Publish Pack SOC : <input type=checkBox id=ShowSOC onclick=handleCheck(this) tooltip_mqtt_soc="Status of Charge"></span><br>
+<span title="Publish Battery Pack Power [W]">Publish Pack W : <input type=checkBox id=ShowPW onclick=handleCheck(this)></span><br>
+<span title="Publish Battery Pack Voltage [mV]">Publish Pack V : <input type=checkBox id=ShowPV onclick=handleCheck(this)></span><br>
+<span title="Publish Battery Pack Current [A]">Publish Pack I : <input type=checkBox id=ShowPA onclick=handleCheck(this)></span><br>
+<span title="Publish Battery Balance Current [A]">Publish Balance I : <input type=checkBox id=ShowBA onclick=handleCheck(this)></span><br>
+<span title="Publish batteries max delta [mV]">Publish Pack &#916V : <input type=checkBox id=ShowPCD onclick=handleCheck(this)></span><br>
+<span title="Publish average batteries voltage [mV]">Publish Batt Average V : <input type=checkBox id=ShowAV onclick=handleCheck(this)></span><br>
+<span title="Publish Battery Pack Temp [C]">Publish Pack Temp : <input type=checkBox id=ShowAT onclick=handleCheck(this)></span><br>
+<span title="Publish BMS Alarms">Publish BMS Alarms Stream: <input type=checkBox id=ShowFails onclick=handleCheck(this)></span><br><br>
+<span title="Publish Max SOC">Publish Max SOC : <input type=checkBox id=ShowMxSoc onclick=handleCheck(this)></span><br>
+<span title="Publish Min VCell">Publish Min VCell : <input type=checkBox id=ShowMnVCel onclick=handleCheck(this)></span><br>
+<span title="Publish Max VCell">Publish Max VCell : <input type=checkBox id=ShowMxVCel onclick=handleCheck(this)></span><br>
+<span title="Publish Nominal Cap">Publish Nominal Cap : <input type=checkBox id=ShowNomCap onclick=handleCheck(this)></span><br>
+<span title="Publish Residual Cap">Publish Residual Cap : <input type=checkBox id=ShowResCap onclick=handleCheck(this)></span><br>
+<span title="Publish Cycle Cap">Publish Cycle Cap : <input type=checkBox id=ShowCyCap onclick=handleCheck(this)></span><br>
+<span title="Publish All Temp">Publish All Temp : <input type=checkBox id=ShowAllTmp onclick=handleCheck(this)></span><br>
+<span title="Publish All Mos status">Publish All MOS : <input type=checkBox id=ShowAllMos onclick=handleCheck(this)></span><br><br>
+
+<input type=submit value=Submit onclick=submitMessage()><br>
+</td>
+<td style=width:20%%>&nbsp;</td>
+<td><p id=dtext></p></td>
+</tr>
+</tbody></table>
+</form><hr><br>
+<div class=btn-group>
+<button onclick='window.location.href="config"'>BACK to CONFIG</button>&emsp;&emsp;
+<button onclick='window.location.href="IoTMQTTPanel"'>GENERATE IoTMQTT Panel CONFIG</button>
+<button onclick='window.location.href="https://www.dalybmswifi.com/images/"'>MQTT MANUAL</button>
+</div>
+</div>
+<iframe style=display:none name=hidden-form></iframe>
+<script>
+var mqttPubFlags=document.getElementById("mqttFlags").value 
+const mqttMap = [
+  "ShowBAT","ShowRES","ShowSOC","ShowPW","ShowPV","ShowPA","ShowBA",
+  "ShowPCD","ShowAV","ShowAT","ShowFails","ShowExtra",
+  "ShowMxSoc","ShowMnVCel","ShowMxVCel","ShowNomCap","ShowResCap",
+  "ShowCyCap","ShowAllTmp","ShowAllMos"
+].reduce((o,k,i)=>(o[k]=i,o),{});
+const el = {};
+["mqttJSON1","mqttJSON2","mqttFLAT1","mqttJSON",
+ "ShowBAT","ShowRES","ShowSOC","ShowPW","ShowPV","ShowPA","ShowBA",
+ "ShowPCD","ShowAV","ShowAT","ShowFails","ShowExtra",
+ "ShowMxSoc","ShowMnVCel","ShowMxVCel","ShowNomCap","ShowResCap",
+ "ShowCyCap","ShowAllTmp","ShowAllMos",
+ "dtext","defaultOpen","btnTestMQTT","btnHADisc","nextPub","boxHADisc",
+ "mqttRefresh","fwStat","mqttPublishEnable",
+ "mS","mUN","mP","mC",
+ "boxEnabled","boxConnected","boxPub","boxSubscr"
+].forEach(id => el[id] = document.getElementById(id));
+function getFlag(flagName) {
+    const bit = mqttMap[flagName];
+    return (mqttPubFlags & (1 << bit)) !== 0;
+}
+function setFlag(flagName, value) {
+    const bit = mqttMap[flagName];
+    if (value)
+        mqttPubFlags |= (1 << bit);
+    else
+        mqttPubFlags &= ~(1 << bit);
+    document.getElementById("mqttFlags").value = mqttPubFlags;
+}
+function loadFlagsIntoUI() {
+    for (const flagName in mqttMap) {
+        const e = el[flagName];
+        if (e) e.checked = getFlag(flagName);
+    }
+}
+function submitMessage(){
+    setTimeout(function(){document.location.reload(false)},3000);
+}
+function openTab(c){
+    var i,t,l,b;
+    t = document.getElementsByClassName("tabcontent");
+    for(i=0;i<t.length;i++) t[i].style.display="none";
+    l = document.getElementsByClassName("tablink");
+    for(i=0;i<l.length;i++) l[i].style.backgroundColor="";
+    b = el.defaultOpen.textContent;
+    document.getElementById(b).style.display = "block";
+    el.defaultOpen.style.backgroundColor = c;
+}
+function testMQTTConnection(){
+    var u="/testmqtt";
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open("GET",u,false);
+    xmlhttp.send();
+    setTimeout(function(){location.reload()},2500);
+}
+function onloadJsoncheck(){
+    el.mqttJSON1.checked=false;
+    el.mqttJSON2.checked=false;
+    if(el.mqttJSON.value==1){
+        el.mqttJSON1.checked=true;
+        el.mqttJSON2.checked=false;
+        el.mqttFLAT1.checked=false;
+    }
+    if(el.mqttJSON.value==2){
+        el.mqttJSON1.checked=false;
+        el.mqttJSON2.checked=true;
+        el.mqttFLAT1.checked=false;
+    }
+    if(el.mqttJSON.value==3){
+        el.mqttJSON1.checked=false;
+        el.mqttJSON2.checked=false;
+        el.mqttFLAT1.checked=true;
+    }
+    handleCheck();
+}
+function handleCheck(cb){
+    if (typeof cb === "number") {
+        if (cb === 1) {
+            el.mqttJSON2.checked = false;
+            el.mqttFLAT1.checked = false;
+            el.mqttJSON.value = 1;
+        }
+        if (cb === 2) {
+            el.mqttJSON1.checked = false;
+            el.mqttFLAT1.checked = false;
+            el.mqttJSON.value = 2;
+        }
+        if (cb === 3) {
+            el.mqttJSON1.checked = false;
+            el.mqttJSON2.checked = false;
+            el.mqttFLAT1.checked = true;
+            el.mqttJSON.value = 3;
+        }
+    }
+    if (!el.mqttJSON1.checked &&
+        !el.mqttJSON2.checked &&
+        !el.mqttFLAT1.checked)
+        el.mqttJSON.value = 0;
+    let j = "";
+    if (el.mqttJSON.value == 0)
+        j+="<b>PUBLISHED FLAT</b>&emsp;&emsp;Topic: NONE<br><br>";
+    else if (el.mqttJSON.value == 3)
+        j+="<b>PUBLISHED FLAT</b>&emsp;&emsp;Topic: <b><input type=\"text\" name=\"mqttJsonTopic\" value=\"%mqttJsonTopic%\" maxlength=\"19\" size=\"19\"></b><br><br>";
+    else
+        j+="<b>PUBLISHED JSON</b>&emsp;&emsp;Topic: <b><input type=\"text\" name=\"mqttJsonTopic\" value=\"%mqttJsonTopic%\" maxlength=\"19\" size=\"19\"></b><br><br>";
+
+    if (el.ShowBAT.checked) {
+        if (el.mqttJSON1.checked)
+            j+="\"bat\": {\"0\": 2947,&emsp;....,&emsp;\"15\": 2949}";
+        else if (el.mqttJSON2.checked)
+            j+="\"b0\": 2947,<br>....,<br>\"b15\": 2949";
+        else
+            j+="\"BATT\"16;2947;....;2949";
+    }
+    if (el.ShowRES.checked) {
+        j+="<br>";
+        if (el.mqttJSON1.checked)
+            j+="\"res\": {\"0\": 12,&emsp;....,&emsp;\"15\": 2}";
+        else if (el.mqttJSON2.checked)
+            j+="\"r0\": 12,<br>....,<br>\"r15\": 15";
+        else
+            j+="\"BRES\"16;2947;....;2949";
+    }
+    if (el.ShowSOC.checked)
+        j+="<br>\"SOC\": 27";
+    const flat = (el.mqttJSON.value == 0 || el.mqttJSON.value == 3);
+    if (flat) {
+        if (el.ShowPW.checked) j+="<br>\"PWATTS\": 42";
+        if (el.ShowPV.checked) j+="<br>\"PMVOLT\": \"47.10\"";
+        if (el.ShowPA.checked) j+="<br>\"PMAMPERE\": \"0.90\"";
+        if (el.ShowPCD.checked) j+="<br>\"PDELTAV\": 6";
+        if (el.ShowAV.checked) j+="<br>\"PAVERAGEMV\": \"2946.00\"";
+        if (el.ShowAT.checked) j+="<br>\"PTEMP\": 10";
+        if (el.ShowFails.checked) {
+            j+="<br>\"PFAIL\": \"0,0,0,0,0,0,0\"";
+            j+="<br>\"PFAIF\": \"1\"";
+        }
+    } else {
+        if (el.ShowPW.checked) j+="<br>\"PWT\": 42";
+        if (el.ShowPV.checked) j+="<br>\"PMV\": \"47.10\"";
+        if (el.ShowPA.checked) j+="<br>\"PMA\": \"0.90\"";
+        if (el.ShowBA.checked) j+="<br>\"BAC\": \"-1.60\"";
+        if (el.ShowPCD.checked) j+="<br>\"PDV\": 6";
+        if (el.ShowAV.checked) j+="<br>\"AMV\": \"2946.00\"";
+        if (el.ShowAT.checked) j+="<br>\"TMP\": 10";
+        if (el.ShowFails.checked) {
+            j+="<br>\"ALM\": \"0,0,0,0,0,0,0\"";
+            j+="<br>\"ALMF\": \"1\"";
+        }
+    }
+    if (el.ShowMxSoc.checked) j+="<br><br>\"SCM\": \"88\"";
+    if (el.ShowMnVCel.checked) j+="<br>\"MIC\": \"2920\"";
+    if (el.ShowMxVCel.checked) j+="<br>\"MAC\": \"3540\"";
+    if (el.ShowNomCap.checked) j+="<br>\"CAP\": \"200\"";
+    if (el.ShowResCap.checked) j+="<br>\"RCP\": \"17\"";
+    if (el.ShowCyCap.checked) j+="<br>\"CYC\": \"121\"";
+    if (el.ShowAllTmp.checked) j+="<br>\"temp\":{\"tm\":280,\"t1\":267,\"t2\":275,\"t4\":276,\"t5\":276}";
+    if (el.ShowAllMos.checked) j+="<br>\"mos\":{\"Ch\":1,\"Di\":1,\"Ba\":1}";
+    el.dtext.innerHTML = j;
+    if (cb instanceof HTMLElement) {
+        setFlag(cb.id, cb.checked);
+    }
+}
+function togglePwd(id, elBtn){
+  const i = el[id];
+  const eyeOpen='<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#444" d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>';
+  const eyeClosed='<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#444" d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/><path stroke="#444" stroke-width="2" d="M3 3l18 18"/></svg>';
+  if(i.type==="password"){ i.type="text"; elBtn.innerHTML=eyeClosed; }
+  else{ i.type="password"; elBtn.innerHTML=eyeOpen; }
+}
+let ws;
+let wsTimer=null;
+function wsConnect(){
+  ws = new WebSocket("ws://"+location.host+"/ws");
+  ws.onopen = function(){
+    wsTimer = setInterval(requestStatus,2000);
+    el.btnTestMQTT.disabled = false;
+    el.btnHADisc.disabled = false;
+  };
+  ws.onmessage = function(evt){
+    console.log(evt.data);
+    try{
+      const d = JSON.parse(evt.data);
+
+      setBox("boxEnabled", d.mqEn);
+      setBox("boxConnected", d.mqCn);
+      setBox("boxPub", d.mqLP);
+      setBox("boxSubscr", d.mqSb);
+
+      el.nextPub.value = d.mqNx;
+      if (d.mqHA == 1) el.boxHADisc.style.background = "#00a000";
+      else el.boxHADisc.style.background = "none";
+     if (d.Syl == 1){ el.mqttRefresh.disabled = false; el.fwStat.innerHTML = "";}
+     if (d.Syl == 0){ el.mqttRefresh.disabled = true; el.fwStat.innerHTML = "ENABLE FULL FEATURE";}
+    }catch(e){}
+  };
+  ws.onclose = function(){
+    clearInterval(wsTimer);
+    setTimeout(wsConnect,2000);
+    el.btnTestMQTT.disabled = true;
+    el.btnHADisc.disabled = true;
+  };
+  ws.onerror = function(){
+    setTimeout(function(){window.location.reload();},5000);
+    el.btnTestMQTT.disabled = true;
+    el.btnHADisc.disabled = true;
+  };
+}
+function requestStatus(){
+  if(ws && ws.readyState===1){
+    ws.send("getMQTTStatus");
+  }
+}
+function setBox(id,val){
+  el[id].style.background = val ? "#00a000" : "#b00000";
+}
+function checkModBusTCP(){
+  if((%mbCfg%&0x01) && el.mqttPublishEnable.checked==true)
+    alert("MODBUS TCP is Enabled ! it is NOT recommended to have MQTT and MODBUS both active");
+}
+function ckFieldSize(){
+  let s = el.mS.value,
+      u = el.mUN.value,
+      p = el.mP.value,
+      c = el.mC.value;
+  el.mS.size = s.length+1;
+  el.mUN.size = u.length+1;
+  el.mP.size = p.length+1;
+  el.mC.size = c.length+1;
+}
+window.onload = function() {
+  loadFlagsIntoUI();
+  onloadJsoncheck();
+  openTab('red');
+  ckFieldSize();
+  wsConnect();
+};
+window.addEventListener("error", function(e) {
+    console.error("Errore globale:", e);
+    setTimeout(() => {
+        location.reload();
+    }, 3000);
+});
+</script>
+</body>
+</html><!--FFILE-->
+<!--HFILE:pushSafer.html--> 
+<!DOCTYPE HTML><html>
+<head>
+  <title>SmartBMS WiFi</title>    
+  <style>
+    body {
+     min-width: 310px;
+     max-width: 1000px;
+     height: 400px;
+     margin: 0 auto;
+     font-family: "Lato", sans-serif;
+    }
+    h2 {
+     font-family: Arial;
+     font-size: 2.5rem;
+     text-align: center;
+    }
+    .tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{color:#000;display:none;padding:20px;text-align:center}
+    .btn-group button {
+  background-color: #04AA6D; 
+  border: 1px solid green; 
+  border-radius: 12px;
+  margin: 4px 2px;
+  color: white; 
+  padding: 10px 24px; 
+  cursor: pointer; 
+  float: left; 
+    }
+    .btn-group:after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    .btn-group button:not(:last-child) {
+      border-right: none; 
+    }
+    .btn-group button:hover {
+      background-color: #3e8e41;
+    }
+    #unLicensed {color: red;background-color: transparent;text-decoration:none;}
+  </style>  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<script>
+  function submitMessage() {
+    setTimeout(function(){ document.location.reload(false); }, 3000);
+  }
+  function testPushSaferContext(){
+    var checkPsID = document.forms["psForm"]["psID"].value;
+    if( checkPsID  == "" || checkPsID == null){
+      alert("Please enter a Valid Push Service ID - create an account @ www.pushsafer.com or www.pushover.com");
+      return false;
+    }
+    if ( document.getElementById("psEn").checked == false && document.getElementById("poEn").checked == false){
+      alert("Please Enable a PUSH Service before to test");
+      return false;
+    }
+    return true;
+  }
+  function testPushSafer(cb){
+    var urltocall = "/testPS?type=";
+    if ( testPushSaferContext() == false )
+      return;
+    if ( cb == 1 || cb == 2)
+      urltocall += cb; 
+    else
+      retun;
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open("GET", urltocall, false);
+    xmlhttp.send();
+    alert("Push hopefully sent to your devices ;-) ");
+    setTimeout(function(){location.reload();}, 2000);
+  }
+  function checkPS(source){
+    if ( source == 0 ){
+      document.getElementById("psEn").checked = false;
+      document.getElementById("psUN").disabled = false;
+    }
+    if ( source == 1 ){
+      document.getElementById("poEn").checked = false;
+      document.getElementById("psUN").disabled = true;
+    }
+  }
+  function openTab(color){
+    var i,tabcontent,tablinks,boxName;
+    tabcontent=document.getElementsByClassName("tabcontent");
+    for (i=0; i < tabcontent.length; i++){
+      tabcontent[i].style.display="none";
+    }
+    tablinks=document.getElementsByClassName("tablink");
+    for (i=0; i < tablinks.length; i++){
+      tablinks[i].style.backgroundColor="";
+    }
+    boxName = document.getElementById("defaultOpen").textContent;
+    document.getElementById(boxName).style.display="block";
+    document.getElementById("defaultOpen").style.backgroundColor=color;
+  }
+  function ckFieldSize() {
+    document.getElementById("psUN").size = document.getElementById("psUN").value.length+1;
+    document.getElementById("psID").size = document.getElementById("psID").value.length+1;
+    document.getElementById("psMsg").size = document.getElementById("psMsg").value.length+1;
+    document.getElementById("psTO").size = document.getElementById("psTO").value.length+1;
+  }
+  function showPwd(id){
+  var inp;
+  if (id==0) inp=document.getElementById("psUN");
+  if (id==1) inp=document.getElementById("psID");
+  if ( inp.type == "password") inp.type="text"; else inp.type="password";
+}
+</script>
+<body>
+  <button class="tablink" onclick="window.location.href='/';">Status</button> 
+  <button class="tablink" onclick="window.location.href='/batt';">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph';">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config';" id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade';">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+  <div style='margin:15px;'><br><center><b>PUSHSAFER CONFIG</center></b>
+  <center><font id="fwStat"></font></center><br> 
+  <hr><br>
+  <table style="width: 100&#37 border-collapse: collapse;" border="0">
+    <tbody>
+      <tr>
+        <td style="width: 70&#37;">
+        <form name="psForm" action="/get_ps" target="hidden-form">
+        <span title="Enable PUSHOVER">PUSHOVER: <input type="checkBox" id="poEn" name="poEn" %poEn% onclick="checkPS(0)"></span><br>
+        <span title="Enable PUSHSAFER">PUSHSAFER: <input type="checkBox" id="psEn" name="psEn" %psEn% onclick="checkPS(1)"></span><br><br>
+    	  <span title="Your UserName or UserKey">User ID: <input type="password" id="psUN" name="psUN" value="%psUN%" maxlength="30" size="5" oninput="ckFieldSize()" ></span>
+        <span title="Show User Name"><input type="checkBox" id="pUsN" onclick="showPwd(0)"></span><br>
+    	  <span title="Your KEY or Token">Private KEY: <input type="password" id="psID" name="psID" value="%psID%" maxlength="30" size="5" oninput="ckFieldSize()" ></span>
+        <span title="Show Key or Token"><input type="checkBox" id="pKoT" onclick="showPwd(1)"></span><br>
+    	  <span title="Push Title">Message: <input type="text" id="psMsg" name="psMsg" value="%psMsg%" maxlength="30" size="5" oninput="ckFieldSize()"></span><br>
+    	  <span title="Send Push to a give device or group - refer to PushOver or PushSafer info">Send to: <input type="text" id="psTO" name="psTO" value="%psTO%" maxlength="10" size="5" oninput="ckFieldSize()" ></span><br><br>         
+          <span title="Send daily Report at SunSet">SunSet Report: <input type="checkBox" id="psSDRSS" name="psSDRSS" %psSDRSS%></span><br>
+          <span title="Send daily Report at SunRise">SunRise Report: <input type="checkBox" id="psSDRSR" name="psSDRSR" %psSDRSR%></span><br>
+          <span title="Send daily Report at 100&#37 SOC">100&#37 SOC Report: <input type="checkBox" id="psSD100" name="psSD100" %psSD100%></span><br>
+          <span title="Send daily Alarms">Alarm Report: <input type="checkBox" id="psSDALM" name="psSDALM" %psSDALM%></span><br>
+          <span title="Send Same Alarm after n-minutes - set 1440 to send one type of alarm per day">Alarm Filter: <input type="number" id="psFIL" name="psFIL" value="%psFIL%" min="0" max="1440"></span><br>         
+          <br><input type="submit" value="Submit" onclick="submitMessage()"><br><br>  
+        </form></td>
+  	<td style="width: 30&#37;">API Credits <b>%psCRED%</b><br><br>
+        <button style="color: blue" onclick="testPushSafer(1);">Send TEST Daily Report NOW</button><br><br>
+  	<button style="color: red" onclick="testPushSafer(2);">Send TEST Alarm Report NOW</button></td>
+      </tr>
+      </tbody>
+  </table>
+<hr><br>  
+<div class="btn-group">
+  <button onclick="window.location.href='config';">BACK to CONFIG</button>
+  <button onclick="window.location.href='https://www.dalybmswifi.com/images/';"> PUSH SERVICE MANUALs </button>
+</div>
+  <iframe style="display:none" name="hidden-form"></iframe>
+</div>
+<script>
+  openTab('red');
+  if ( document.getElementById("poEn").checked == true )
+    document.getElementById("psUN").disabled = false;
+  else
+    document.getElementById("psUN").disabled = true;
+if ( !%fwStatus% ){
+  document.getElementById("psSD100").disabled = true;
+  document.getElementById("psSDALM").disabled = true;
+  document.getElementById("psFIL").disabled = true;
+  document.getElementById("fwStat").innerHTML = "<br><a id=\"unLicensed\" href=\"license.html\"><b>ACTIVATE</b></a><br>";
+}
+ckFieldSize();
+</script>
+</body>
+</html>
+
+<!--FFILE-->
+<!--HFILE:SystemConfig.html--> 
+<!DOCTYPE HTML><html>
+<head>
+  <title>ScanLabs SMART BMS DATA EXTRACTOR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <style>
+    body{min-width:310px;max-width:1000px;margin:0 auto;font-family:"Lato",sans-serif}
+    h2{font-family:Arial;font-size:2.5rem;text-align:center}
+    .ssidRow:hover{background:#ddd;cursor:pointer}
+    .tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+    .tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+    .tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+    .tabcontent{display:none;padding:20px;text-align:center}
+    .btn-group button{background:#04AA6D;border:1px solid green;border-radius:12px;margin:4px 2px;color:#fff;padding:10px 24px;cursor:pointer;float:left}
+    .btn-group:after{content:"";clear:both;display:table}
+    .btn-group button:hover{background:#3e8e41}
+    #modalOverlay{position:fixed;top:0;left:0;width:100%%;height:100%%;background:rgba(0,0,0,0.5);display:none;justify-content:center;align-items:center;z-index:999}
+    #modalBox{background:#fff;width:90%%;max-width:500px;height:70%%;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+    #map{flex:1}
+    #closeBtn{padding:8px;background:#ddd;text-align:center;cursor:pointer}
+    #unLicensed{color:red;background:transparent;text-decoration:none}
+  </style>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    let ssidTableArray=[%scanAP%];
+    function submitMessage(){
+      if(inPWD.value.length<8) inPWD.value="";
+      if(ckSIP.checked){
+        if(!ValidateNETaddress(IPAddr.value)||
+           !ValidateNETaddress(SubNet.value)||
+           !ValidateNETaddress(DGatw.value)) return;
+      }
+      setTimeout(()=>location.reload(),3000);
+    }
+    function submitMessageRB(){
+      alert("System Rebooting please wait 10s :-)");
+      setTimeout(()=>location='/',10000);
+    }
+    function submitMessageFR(form){
+      setTimeout(()=>location='/',3000);
+      form.submit();
+    }
+    function openTab(color){
+      let t=document.getElementsByClassName("tabcontent");
+      for(let i=0;i<t.length;i++) t[i].style.display="none";
+      let l=document.getElementsByClassName("tablink");
+      for(let i=0;i<l.length;i++) l[i].style.backgroundColor="";
+      let b=defaultOpen.textContent;
+      document.getElementById(b).style.display="block";
+      defaultOpen.style.backgroundColor=color;
+    }
+    function syncDate(){
+      let x=new XMLHttpRequest();
+      x.open("GET","/SysDate?epoch="+Math.trunc(Date.now()/1000),false);
+      x.send();
+      submitMessage();
+    }
+    function ValidateNETaddress(ip){
+      let r=/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+      if(r.test(ip)) return true;
+      alert("Invalid IP address!");
+      return false;
+    }
+    function handleWiFiMode(){
+      let t="&emsp;&emsp;&emsp;(WiFi ";
+      let ip="",w="";oM="none";
+      if(wifiMode.checked){
+        handleAPModeSet(true);
+        t+='Access Point <b>"SmartBMS.it"</b>)';
+      }else{
+        handleAPModeSet(false);
+        t+="<b>Station</b> Mode)";
+        ip="Current IP: <b>%curIP%</b><br>HTTP Port: <input type='number' min='80' max='65535' name='curPO' value='%curPO%' size='5'><br><br>";
+        w="<img src='%weatherLink%' style='width:333px;height:80px;'><br><br>";
+        oM="inline-block";
+      }
+      wifiModeAlert.innerHTML=t;
+      currentIP_PORT.innerHTML=ip;
+      weatherDiv.innerHTML=w;
+      openMapBtn.style.display=oM;
+    }
+    function showPwd(){inPWD.type=(inPWD.type=="password")?"text":"password";}
+    function scanSSID(){
+      sscan.innerHTML="<br>**** SCANNING ACCESS POINT ****<br><br>";
+      let x=new XMLHttpRequest();
+      x.open("GET","/sscan",false);
+      x.send();
+      setTimeout(()=>location.reload(),4000);
+    }
+    function selectSSID(i){
+      wifiMode.checked=false;
+      handleWiFiMode();
+      inSSID.value=ssidTableArray[i];
+      if(ssidTableArray[i+2]=="0"){
+        inPWD.style.visibility="hidden";
+        inPWD.value="";
+      }
+      setTimeout(() => { sscan.innerHTML=""; }, 1000);
+    }
+    function populateSSID(){
+      if(ssidTableArray.length==0) return;
+      if(ssidTableArray.length%%4!=0) return;
+      let t="<br>Click on SSID to Select<br><table border='2' style='border-collapse:collapse;width:60%%'><tr><td><b>SSID</b></td><td><b>CH</b></td><td><b>SEC</b></td><td><b>PW</b></td></tr>";
+      for(let i=0;i<ssidTableArray.length;i+=4){
+        t+="<tr class='ssidRow'><td><span onclick='selectSSID("+i+")'>"+ssidTableArray[i]+"</span></td><td>"+ssidTableArray[i+1]+"</td><td>"+(ssidTableArray[i+2]=="0"?"open":"enc")+"</td><td>"+ssidTableArray[i+3]+"%%</td></tr>";
+      }
+      t+="</table><br><br>";
+      sscan.innerHTML=t;
+    }
+    function ckFieldSize(){
+      inPWD.size=inPWD.value.length+1;
+      inSSID.size=inSSID.value.length+1;
+    }
+    function handleInit(){
+      handleDHCPClick();
+      handleWiFiMode();
+      populateSSID();
+      ckFieldSize();
+      setCoord(currentLat,currentLng);
+    }
+    function checkComma(l){
+      let e=l?document.getElementsByName("inputLONGITUDE")[0]:document.getElementsByName("inputLATITUDE")[0];
+      e.value=e.value.replace(/,/g,".");
+    }
+    function handleDHCPClick(){
+      if(!ckSIP.checked){
+        staticIP.innerHTML="";
+        return;
+      }
+      staticIP.innerHTML="<table><tr><td>IP Address</td><td><input type='text' name='IPAddr' id='IPAddr' value='%IPAddr%'></td></tr><tr><td>Subnet</td><td><input type='text' name='IPSubNet' id='SubNet' value='%IPSubNet%'></td></tr><tr><td>Default GW</td><td><input type='text' name='IPDefGW' id='DGatw' value='%IPDefGW%'></td></tr></table><br>";
+    }
+    function handleAPModeSet(c){
+      if(!c){
+        if(!ckSIP.checked){
+          staticIP.innerHTML="";
+          inSSID.style.visibility="";
+          ckSIP.style.visibility="";
+        }else handleDHCPClick();
+      }else{
+        inSSID.style.visibility="hidden";
+        ckSIP.style.visibility="hidden";
+        staticIP.innerHTML="<table><tr><td>IP Address</td><td><input type='text' name='IPAddr' value='192.168.0.1'></td></tr><tr><td>Subnet</td><td><input type='text' name='IPSubNet' value='255.255.255.0'></td></tr><tr><td>Default GW</td><td><input type='text' name='IPDefGW' value='192.168.0.1'></td></tr></table><br>";
+      }
+    }
+    function setCoord(lat,lon){
+      document.getElementsByName("inputLATITUDE")[0].value=lat;
+      document.getElementsByName("inputLONGITUDE")[0].value=lon;
+    }
+    function initMap(){
+      map=L.map("map").setView([currentLat,currentLng],5);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
+      marker=L.marker([currentLat,currentLng]).addTo(map);
+      map.on("click",e=>{
+        currentLat=e.latlng.lat;
+        currentLng=e.latlng.lng;
+        setCoord(currentLat.toFixed(6),currentLng.toFixed(6));
+        closeBtn.textContent="Lat: "+currentLat.toFixed(4)+" Lon: "+currentLng.toFixed(4)+" [Push to Set&Close]";
+        marker.setLatLng(e.latlng);
+      });
+    }
+    let currentLat=%inputLATITUDE%;
+    let currentLng=%inputLONGITUDE%;
+    let map=null,marker=null;
+  </script>
+</head>
+<body onload="handleInit()">
+  <button class="tablink" onclick="location.href='/'">Status</button>
+  <button class="tablink" onclick="location.href='/batt'">Battery</button>
+  <button class="tablink" onclick="location.href='/graph'">Monitor</button>
+  <button class="tablink" onclick="location.href='/config'" id="defaultOpen">Settings</button>
+  <button class="tablink" onclick="location.href='/fwupgrade'">Upgrade</button>
+  <div id="Settings" class="tabcontent"></div>
+  <div style="margin:15px">
+    <br><center><b>Config File Version # %inputJVERSION%</b></center>
+    <center><font id="fwStat"></font></center><br>
+    <hr><br>
+    <form action="/get_misc" target="hidden-form">
+      WiFi Mode: AP <input type="checkbox" id="wifiMode" name="wifiMode" %wifiMode% onclick="handleWiFiMode()">
+      <span id="wifiModeAlert"></span>
+      <br>STATUS: %WStatus%<br>
+      <br>SSID: <input type="text" name="inSSID" id="inSSID" value="%inSSID%" maxlength="32" size="5" oninput="ckFieldSize()">
+      <input type="button" onclick="scanSSID()" value="SCAN"><br>
+      <span id="sscan"></span>
+      PASSPHRASE: <input type="password" id="inPWD" name="inPWD" value="%inPWD%" maxlength="64" size="5" oninput="ckFieldSize()">
+      <input type="checkbox" onclick="showPwd()"><br>
+      WiFi Power [dBm]: <input type="number" min="0" max="20" step="1" name="inputWiFiPower" value="%inputWiFiPower%" size="2"><br><br>
+      <font id="currentIP_PORT"></font>
+      HostName: <input type="text" name="HostName" id="HostName" value="%HostName%" maxlength="10" size="10"><br>
+      Static IP: <input type="checkbox" name="staticIP" id="ckSIP" %staticIP% onclick="handleDHCPClick()"><br>
+      <p id="staticIP"></p>
+      Latitude: <input type="number" min="-90" max="90" step="0.0000001" name="inputLATITUDE" onblur="checkComma(0)">
+      Longitude: <input type="number" min="-180" max="180" step="0.0000001" name="inputLONGITUDE" onblur="checkComma(1)">
+      <button id="openMapBtn" type="button">Select Coordinates</button>
+      <div id="modalOverlay">
+        <div id="modalBox">
+          <div id="map"></div>
+          <div id="closeBtn">Set&Close *You will need to Submit*</div>
+        </div>
+      </div>
+      <br>%getCurrentTime% <button type="button" onclick="syncDate()">Sync with PC</button>
+      <br>Time Zone GMT+: <input type="number" name="inputTIMEZONE" min="-11" max="14" value="%inputTIMEZONE%">
+      <br>Time 24h format: <input type="checkbox" id="input24" name="input24" %input24%><br><br>
+      <p id="weatherDiv"></p>
+      <input type="submit" value="Submit" onclick="submitMessage()"><br><br>
+    </form>
+    <hr>
+    <div class="btn-group">
+      <button onclick="location.href='misc'">MISC</button>
+      <button onclick="location.href='mqtt'">MQTT</button>
+      <button onclick="location.href='display'">DISPLAY</button>
+      <button onclick="location.href='modbustcp'">MODBUSTCP</button>
+      <button onclick="location.href='pushsafer'">NOTIFICATIONS</button>
+      <button onclick="location.href='vUart'">UART TUNNEL</button>
+      <button onclick="location.href='upload'">LOG&FILE</button>
+      <button onclick="location.href='https://www.dalybmswifi.com/images/'">HELP</button>
+      <button onclick="location.href='debug'">4 NERDS</button>
+      <button onclick="location.href='https://www.dalybmswifi.com/donate/'">DONATE :-)</button>
+    </div>
+    <br><hr>
+    <table><tr>
+      <th>
+        <form action="/get_RTF" target="hidden-formXX">
+          <input type="hidden" name="SystemReboot">
+          <input type="submit" value="System Restart" onclick="submitMessageRB()">
+        </form>
+      </th>
+      <th>
+        <form action="/get_RTF" target="hidden-formXY" onsubmit="return(confirm('Restore to factory?') ? submitMessageFR(this) : false)">
+          <input type="hidden" name="RestoreToFactory">
+          <input type="submit" value="** Factory Reset **">
+        </form>
+      </th>
+    </tr></table>
+  </div>
+  <iframe style="display:none" name="hidden-form"></iframe>
+  <iframe style="display:none" name="hidden-formXX"></iframe>
+  <iframe style="display:none" name="hidden-formXY"></iframe>
+  <script data-name="BMC-Widget" data-cfasync="false"
+    src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+    data-id="scanlabs"
+    data-description="Support me on Buy me a coffee!"
+    data-message="Thank you so much for supporting my work, it truly means a lot !"
+    data-color="#FF813F"
+    data-position="Right"
+    data-x_margin="18"
+    data-y_margin="18"
+    id="bmcWidget">
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const w = document.getElementById("bmcWidget");
+      if (!w) return;
+      w.setAttribute("data-position", "Right-Bottom");
+    });
+  </script>
+  <script>
+    openTab('red');
+    if(!%fwStatus%){
+      let f=document.getElementById("fwStat");
+      if(f) f.innerHTML="<br><a id='unLicensed' href='license.html'><b>ACTIVATE</b></a><br>";
+    }
+    openMapBtn.onclick=function(){
+      modalOverlay.style.display="flex";
+      if(!map) initMap();
+      setTimeout(()=>map.invalidateSize(),200);
+    };
+    closeBtn.onclick=function(){
+      modalOverlay.style.display="none";
+    };
+  </script>
+</body>
+</html><!--FFILE-->
+<!--HFILE:uploadiframe.html--> 
+<!DOCTYPE HTML>
+<head>
+  <title>SmartBMS WiFi</title>    
+  <style>
+body {
+ min-width: 310px;
+ max-width: 1000px;
+ height: 400px;
+ margin: 0 auto;
+ font-family: "Lato", sans-serif;
+}
+h2 {
+ font-family: Arial;
+ font-size: 2.5rem;
+ text-align: center;
+}
+.tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+.tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+.tabcontent{color:#000;display:none;padding:20px;text-align:center}
+.btn-group button {
+  background-color: #04AA6D; 
+  border: 1px solid green; 
+  color: white; 
+  padding: 10px 24px; 
+  cursor: pointer; 
+  float: left; 
+}
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.btn-group button:not(:last-child) {
+  border-right: none; 
+}
+.btn-group button:hover {
+  background-color: #3e8e41;
+}
+</style> 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <button class="tablink" onclick="window.location.href='/';">Status</button> 
+  <button class="tablink" onclick="window.location.href='/batt';">Battery</button>
+  <button class="tablink" onclick="window.location.href='/graph';">Monitor</button>
+  <button class="tablink" onclick="window.location.href='/config';">Settings</button>
+  <button class="tablink" onclick="window.location.href='/fwupgrade';" id="defaultOpen">Upgrade</button>
+  <div id="Upgrade" class="tabcontent"></div>
+ <div style='margin:15px;'><iframe src="/update" width="100%%" height="400" style="border:none;"></iframe></div>
+<script>
+function openTab(color){
+  var i,tabcontent,tablinks,boxName;
+  tabcontent=document.getElementsByClassName("tabcontent");
+  for (i=0; i < tabcontent.length; i++){
+    tabcontent[i].style.display="none";
+  }
+  tablinks=document.getElementsByClassName("tablink");
+  for (i=0; i < tablinks.length; i++){
+    tablinks[i].style.backgroundColor="";
+  }
+  boxName = document.getElementById("defaultOpen").textContent;
+  document.getElementById(boxName).style.display="block";
+  document.getElementById("defaultOpen").style.backgroundColor=color;
+}
+openTab('red');
+</script>
+</body>
+</html>
+<!--FFILE-->
+<!--HFILE:vUart.html--> 
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>SmartBMS WiFi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body{min-width:310px;max-width:1000px;height:400px;margin:0 auto;font-family:"Lato",sans-serif}
+      h2{font-family:Arial;font-size:2.5rem;text-align:center}
+      .tablink{background:#e0e0e0;color:#333;float:left;border:none;border-radius:10px;cursor:pointer;padding:6px 12px;font-size:11px;font-weight:600;width:20%;margin:3px 0;text-align:center;transition:background .25s,transform .25s,box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+      .tablink:hover{background:#d5d5d5;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.12);}
+      .tablink.active{background:#00978f;color:#fff;transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.15);}
+      .tabcontent{color:#000;display:none;padding:20px;text-align:center}
+      .btn-group button{background:#04AA6D;border:1px solid green;border-radius:12px;margin:4px 2px;color:#fff;padding:10px 24px;cursor:pointer;float:left}
+      .btn-group:after{content:"";clear:both;display:table}
+      .btn-group button:not(:last-child){border-right:none}
+      .btn-group button:hover{background:#3e8e41}
+      #unLicensed{color:red;background:transparent;text-decoration:none}
+      .led{display:inline-block;width:12px;height:12px;border-radius:50%%;margin-left:6px;background:#900}
+      .led.on{background:#0c0}
+    </style>
+  </head>
+
+  <script>
+    function submitMessage(){setTimeout(()=>{document.location.reload(false)},2000)}
+    function openTab(color){
+      let t=document.getElementsByClassName("tabcontent")
+      for(let i=0;i<t.length;i++)t[i].style.display="none"
+      let l=document.getElementsByClassName("tablink")
+      for(let i=0;i<l.length;i++)l[i].style.backgroundColor=""
+      let box=document.getElementById("defaultOpen").textContent
+      document.getElementById(box).style.display="block"
+      document.getElementById("defaultOpen").style.backgroundColor=color
+    }
+  </script>
+
+  <body>
+    <button class="tablink" onclick="window.location.href='/'">Status</button>
+    <button class="tablink" onclick="window.location.href='/batt'">Battery</button>
+    <button class="tablink" onclick="window.location.href='/graph'">Monitor</button>
+    <button class="tablink" onclick="window.location.href='/config'" id="defaultOpen">Settings</button>
+    <button class="tablink" onclick="window.location.href='/fwupgrade'">Upgrade</button>
+
+    <div id="Settings" class="tabcontent"></div>
+
+    <div style="margin:15px">
+      <br><center><b>VIRTUAL UART CONFIG</b></center><br>
+      <center><span id="fMem"></span></center>
+      <center><font id="fwStat"></font></center><br>
+      <hr><br>
+
+      <!-- FORM COMPLETO -->
+      <form action="/getmisc" target="hidden-form">
+        <span title="Enable UART Tunnel (eg for PCMaster or JK-BMS-MONITOR)">UART Tunnel:
+          <input type="checkBox" name="tcpVConsole" id="vUrt" onclick="wsSendUart()">
+        </span><br><br>
+
+        Virtual UART Mode:
+        <select id="vMode"
+                onfocus="editing.vMode = true"
+                onblur="wsSendMode()">
+          <option value="0">SERVER</option>
+          <option value="1">CLIENT</option>
+        </select><br><br>
+
+        <!-- IP/HOSTNAME -->
+        <div id="vIPbox" style="display:none;margin-top:10px">
+          Remote Server IP/Host:
+          <input type="text" id="vIP" value=""
+                 style="width:180px"
+                 onfocus="editing.vIP = true"
+                 onblur="wsSendIP()">
+          <span id="vIPerr" style="color:red;display:none">Invalid IP/Hostname</span>
+        </div>
+        <br>
+
+        Uart Tunnel Port:
+        <input type="number" id="vPort" min="1" max="65535" value="6790"
+               style="width:70px"
+               onfocus="editing.vPort = true"
+               onblur="wsSendPort()"><br><br>
+
+        No Timeout on WS:
+        <input type="checkbox" id="vInf" onclick="wsSendInf()"><br><br>
+      </form>
+
+      <div id="uartStats" style="display:none;margin-top:10px;text-align:left">
+        <b>Virtual UART Status</b><br>
+        Remote Connected: <span id="uartConnLED" class="led" title="Not connected"></span><br>
+        RX bytes: <span id="uartRX">0</span><br>
+        TX bytes: <span id="uartTX">0</span><br>
+        Uptime UART: <span id="uartUP">0s</span><br>
+        Timeout WS: <span id="uartTO">0s</span><br>
+      </div>
+
+      <hr><br>
+      <div class="btn-group"><button onclick="window.location.href='config'">BACK to CONFIG</button></div>
+      <iframe style="display:none" name="hidden-form"></iframe>
+    </div>
+
+    <script>
+      let ws=null,hbTimer=null,uartStart=0,uartUptimeTimer=null,lastConnState=0
+
+      /* PATCH: LOCK EDITING */
+      let editing = {
+        vIP: false,
+        vPort: false,
+        vMode: false
+      };
+
+      function wsFailReload(){setTimeout(()=>location.reload(),2000)}
+
+      function updateUptime(){
+        if(!uartStart)return
+        let sec=Math.floor((Date.now()-uartStart)/1000)
+        document.getElementById("uartUP").textContent=sec+"s"
+      }
+
+      function formatBytes(bytes){
+        if(bytes===0)return"0 B"
+        const units=["B","KB","MB","GB","TB"],k=1024
+        const i=Math.floor(Math.log(bytes)/Math.log(k))
+        const value=bytes/Math.pow(k,i)
+        const fixed=(value<10)?value.toFixed(1):Math.round(value)
+        return fixed+" "+units[i]
+      }
+
+      function isValidIP(ip){
+        const parts = ip.split(".");
+        if(parts.length !== 4) return false;
+        return parts.every(p => /^\d+$/.test(p) && p >= 0 && p <= 255);
+      }
+
+      function isValidHostname(h){
+        return /^[a-zA-Z0-9.-]{1,253}$/.test(h);
+      }
+
+      function validateIP(){
+        let v = document.getElementById("vIP").value.trim();
+        let err = document.getElementById("vIPerr");
+
+        if (isValidIP(v) || isValidHostname(v)) {
+          err.style.display = "none";
+          return true;
+        }
+
+        err.style.display = "inline";
+        return false;
+      }
+
+      function updateView() {
+        const v = document.getElementById("vUrt").checked;
+        ["vPort","vIP","vMode"].forEach(id => 
+          document.getElementById(id).disabled = v
+        );
+        document.getElementById("uartStats").style.display = v ? "block" : "none";
+      }
+
+      /* WS SEND */
+      function wsSendUart(){
+        if(!ws||ws.readyState!==1)return
+        let v=document.getElementById("vUrt").checked?1:0
+        ws.send(JSON.stringify({vUrt:v}))
+        updateView();
+      }
+
+      function wsSendPort(){
+        if(!ws||ws.readyState!==1)return
+        let p=parseInt(document.getElementById("vPort").value)
+        ws.send(JSON.stringify({vPrt:p}))
+        editing.vPort = false;
+      }
+
+      function wsSendInf(){
+        if(!ws||ws.readyState!==1)return
+        let inf=document.getElementById("vInf").checked?1:0
+        ws.send(JSON.stringify({vInf:inf}))
+      }
+
+      function wsSendMode(){
+        let mode = parseInt(document.getElementById("vMode").value);
+        document.getElementById("vIPbox").style.display = (mode === 1) ? "block" : "none";
+        if(!ws||ws.readyState!==1)return
+        ws.send(JSON.stringify({vSC:mode}))
+        editing.vMode = false;
+      }
+
+      function wsSendIP(){
+        if(!validateIP()) return
+        if(!ws||ws.readyState!==1)return
+        let ip = document.getElementById("vIP").value.trim()
+        ws.send(JSON.stringify({vIP:ip}))
+        editing.vIP = false;
+      }
+
+      /* WS RECEIVE */
+      function startWS(){
+        var gateway=`ws://${window.location.hostname}:${window.location.port}/ws`
+        ws=new WebSocket(gateway)
+        let openTimeout=setTimeout(()=>{wsFailReload()},2000)
+
+        ws.onopen=()=>{clearTimeout(openTimeout)}
+        ws.onerror=()=>wsFailReload()
+        ws.onclose=()=>wsFailReload()
+
+        ws.onmessage=(e)=>{
+          console.log("WS RAW:",e.data)
+          let d;try{d=JSON.parse(e.data)}catch(e){return}
+
+          if(d.vUrt !== undefined ){
+            document.getElementById("vUrt").checked=(d.vUrt===1);
+            updateView();
+          }else{
+            document.getElementById("uartStats").style.display="none";
+            return;
+          }
+
+          document.getElementById("fMem").textContent=d.heap+" Bytes"
+          
+
+
+          if (d.lic !== undefined ) {
+            let licMsg = "<br><a id='unLicensed' href='license.html'><b>ACTIVATE</b></a><br>";
+            document.getElementById("fwStat").innerHTML = (d.lic === 0) ? licMsg : "";
+          }
+
+          /* MODE */
+          if (d.vSC !== undefined && !editing.vMode) {
+            let mode = parseInt(d.vSC);
+            document.getElementById("vMode").value = mode;
+            document.getElementById("vIPbox").style.display = (mode === 1) ? "block" : "none";
+          }
+
+          /* IP/HOSTNAME */
+          if (d.vIP !== undefined && !editing.vIP) {
+            document.getElementById("vIP").value = d.vIP;
+            validateIP();
+          }
+
+          /* PORT */
+          if (d.vPrt !== undefined && !editing.vPort) {
+            document.getElementById("vPort").value = d.vPrt;
+          }
+
+
+          // document.getElementById("vPort").disabled=true;
+          // document.getElementById("uartStats").style.display="block";
+
+          let led=document.getElementById("uartConnLED")
+          if(d.vCnt){
+            led.classList.add("on")
+            led.title="Connected"
+            if(lastConnState===0){
+              uartStart=Date.now()
+              clearInterval(uartUptimeTimer)
+              uartUptimeTimer=setInterval(updateUptime,1000)
+            }
+            lastConnState=1
+          }else{
+            led.classList.remove("on")
+            led.title="Not connected"
+            lastConnState=0
+            uartStart=0
+            clearInterval(uartUptimeTimer)
+            document.getElementById("uartUP").textContent="0s"
+          }
+
+          document.getElementById("uartRX").textContent=formatBytes(d.vRxB)
+          document.getElementById("uartTX").textContent=formatBytes(d.vTxB)
+          document.getElementById("vInf").checked=d.vInf;
+          if (d.vTmt != 0xFFFF) document.getElementById("uartTO").textContent=d.vTmt+"s"; else document.getElementById("uartTO").textContent="oo";
+        }
+      }
+
+      hbTimer=setInterval(()=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({uGet:1}))},1000)
+      document.addEventListener("DOMContentLoaded",startWS)
+      openTab('red')
+
+    </script>
+  </body>
+</html>
+<!--FFILE-->
+<!--HFILE:version.html--> 
+{
+ "ver": "web-3.6.0.all"
+}<!--FFILE-->
