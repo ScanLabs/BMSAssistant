@@ -8,7 +8,7 @@ DALY - JK - 100Balance - DALY Clones such as Hi - ALL in ONE Assistant - SMART B
 -  **DALY** – NEWER & FORMER Models with UART(1) Interface ( RS232 )
 -  JK BMS via GPS port - JK-Bx
     -  JK-BD6AxxS-10P / JK-BD6AxxS-12P / JK-BD6AxxS-15P/ JK-B1AxxS-15PJK-B2AxxS-15P/ JK-B2AxxS-20P
--  JK BMS via **RS485** port ( RS485A only for the moment)
+-  JK BMS via **RS485** port ( RS485A&B ) and via ** CAN BUS ** port
     -  JK-BD6AxxS-10P, JK-BD6AxxS-12P, JK-BD6AxxS-15P, JK-B1AxxS-15P , JK-B2AxxS-15P, JK-B2AxxS-20P
 
 # Feauture set :
@@ -58,7 +58,7 @@ DALY - JK - 100Balance - DALY Clones such as Hi - ALL in ONE Assistant - SMART B
  	    JK extension connected to GPS Port can be used as well
 -	**PACKET SNIFFER** between Bluetooth LE Dongle and DALY Smart BMS
 - **Inject RAW command to BMS** via web page
--	**Virtual UART over TCP** to use BmsMonitorVx.x.x or JK equivalent sw via internet
+- **Virtual UART over TCP** to use BmsMonitorVx.x.x or JK-BMS-MONITOR via internet
     manage advanced parameters using DALY / JK SW wherever you are !
 -	**WEATHER FORECAST** and SunRise/SunSet based on your coordinates
 -	**TimeZone detection** based on your coordinates
