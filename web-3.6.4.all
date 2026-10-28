@@ -643,7 +643,86 @@ const downloadExtraFile = ( dataSource, fileName ) => {
    URL.revokeObjectURL(link.href);
 };
 
-function downloadAllConfFile(){
+// Mappa di conversione V3 → V2
+const mapV3toV2 = {
+  ss: "wssid",
+  wd: "wpwd",
+  msrv: "mqtt_server",
+  musr: "mqtt_uname",
+  mpwd: "mqtt_pwd",
+  mprt: "mqtt_port",
+  mpub: "mqtt_Publish",
+  msec: "mqtt_Sec"
+};
+
+// Campi richiesti dal CODICE CLIENT
+const requiredFields = [
+  "wssid",
+  "wpwd",
+  "mqtt_server",
+  "mqtt_uname",
+  "mqtt_pwd",
+  "mqtt_port",
+  "mqtt_Publish",
+  "mqtt_Sec"
+];
+
+// Funzione principale
+async function downloadConfigV2() {
+  try {
+    // 1. Scarica il contenuto di config3.txt tramite il tuo handler
+    const Theurl = "/file?name=config3.txt&action=download";
+    const response = await fetch(Theurl);
+
+    if (!response.ok) {
+      alert("Impossibile leggere config3.txt");
+      return;
+    }
+
+    const configV3 = await response.json();
+
+    // 2. Converte i campi necessari da V3 → V2
+    const configV2 = {};
+
+    for (const [v3, v2] of Object.entries(mapV3toV2)) {
+      if (configV3.hasOwnProperty(v3)) {
+        configV2[v2] = configV3[v3];
+      }
+    }
+
+    // 3. Mantiene solo i campi richiesti dal client
+    const minimalConfig = {};
+    requiredFields.forEach(f => {
+      minimalConfig[f] = configV2[f] ?? "";
+    });
+
+    // 4. Prepara il file per il download
+    const blob = new Blob(
+      [JSON.stringify(minimalConfig, null, 2)],
+      { type: "text/plain" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    // 5. Crea il link di download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "config.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error(err);
+    alert("Errore durante la conversione del file");
+  }
+}
+
+function downloadAllConfFile(model){
+  if (!model)
+  {
    downloadConfigFile();
    downloadPanelFile();
    downloadExtraFile( online_cmd, "online.cmd");
@@ -651,6 +730,7 @@ function downloadAllConfFile(){
    downloadExtraFile( idle_off_cmd, "idle_off.cmd");
    downloadExtraFile( idle_short_cmd, "idle_short.cmd");
    downloadExtraFile( idle_long_cmd, "idle_long.cmd");
+ }else{  downloadConfigV2(); }
 }   
 function submitMessage() {
   dashBoardConfig(0);
@@ -754,6 +834,24 @@ function DoChecks(parIn){
   if ( document.getElementById("ChEn").checked==false)
     document.getElementById("ChT").disabled=true;
 
+  const oh = document.getElementById("oHEn").checked;
+  const ta = document.getElementById("TaEn").checked;
+  const btnOH = document.getElementById("btnOH");
+  const btnTA = document.getElementById("btnTA");
+
+  if (oh && !ta) {
+      btnOH.style.display = "inline-block";
+      btnTA.style.display = "none";
+  }
+  else if (ta && !oh) {
+      btnTA.style.display = "inline-block";
+      btnOH.style.display = "none";
+  }
+  else {
+      btnOH.style.display = "none";
+      btnTA.style.display = "none";
+  }
+
   if (!%mqttPublishEnable% && parIn<2){
     alert("Display requires MQTT to be configured and active");
   }
@@ -852,7 +950,8 @@ function DoChecks(parIn){
 <hr><br>  
 <div class="btn-group">
   <button onclick="window.location.href='config';">BACK to CONFIG</button>
-  <button onclick = "downloadAllConfFile()">GENERATE openHASP CONFIG</button>
+  <button id="btnOH" onclick="downloadAllConfFile(0)">GENERATE openHASP CONFIG</button>
+  <button id="btnTA" onclick="downloadAllConfFile(1)">GENERATE TASMOTA CONFIG</button>
   <span title="Download Instruction how to configure TASMOTA or OPENHASP Color Display">
   <button onclick="window.location.href='https://www.dalybmswifi.com/images/';"> DOWNLOAD DISPLAY MANUAL </button>
   </span>
@@ -1138,7 +1237,7 @@ th1{padding:10px;font-size:14px;display:inline-block;text-decoration:none;border
 </style>
 </head>
 <script src="%GAUGE_SOURCE%"></script>
-<body style="background-color:#1f1e22"onload="setSOC()">
+<body style="background-color:#1f1e22"onload="setSOC(0)">
 <button class="tablink"onclick="closeSocket();window.location.href=window.location.href;"id="defaultOpen"">Status</button> 
 <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'batt';">Battery</button>
 <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'graph';">Monitor</button>
@@ -1158,7 +1257,23 @@ th1{padding:10px;font-size:14px;display:inline-block;text-decoration:none;border
 <table class="center">
   <tr>
     <td class="w45"></td>
-    <td class="w10"><canvas id="SOC"></canvas></td>
+    <td class="w10">
+	  <div style="position:relative; display:inline-block;">
+	    <canvas id="SOC"></canvas>
+	    <div id="socText"
+	         style="
+	           position:absolute;
+	           top:65%%;
+	           left:50%%;
+	           transform:translate(-50%%, -10%%);
+	           font-size:32px;
+	           font-weight:700;
+	           color:#41cd52;
+	           pointer-events:none;
+	           text-shadow:0px 0px 2px #000;">
+	    </div>
+	  </div>
+	</td>
     <td class="w45"></td>
   </tr>
 </table>
@@ -1313,11 +1428,12 @@ function onMessage(event){
     console.log(event.data);
     var myObj=JSON.parse(event.data);
     var keys;
+    var tmpSOC=0;
     if (myObj) keys=Object.keys(myObj); else return;
     for (var i=0; i < keys.length; i++){
         var key=keys[i];
         switch (key){
-            case 'soc':var tmpSOC=myObj[key];document.getElementById(key).innerHTML=tmpSOC;setSOC(tmpSOC);break;
+            case 'soc':tmpSOC=myObj[key];document.getElementById(key).innerHTML=tmpSOC;setSOC(tmpSOC);break;
             case 'dfs':disChargeFetState=myObj[key];set_SWITCH_MosStatus(0);break;             
             case 'cfs':chargeFetState=myObj[key];set_SWITCH_MosStatus(1);break;
             case 'bls':balanceFetState=myObj[key];set_SWITCH_MosStatus(2);break;             
@@ -1390,13 +1506,48 @@ function SwitchBalanceMOS(){
     websocket.close();
   }
 }
+var gauge;
+function getGaugeColor(value){
+  const pc = optsJK.percentColors;
+  const v = value / 100;
+
+  for (let i = 0; i < pc.length - 1; i++){
+    const [p1, c1] = pc[i];
+    const [p2, c2] = pc[i+1];
+
+    if (v >= p1 && v <= p2){
+      const ratio = (v - p1) / (p2 - p1);
+
+      const r1 = parseInt(c1.slice(1,3),16);
+      const g1 = parseInt(c1.slice(3,5),16);
+      const b1 = parseInt(c1.slice(5,7),16);
+
+      const r2 = parseInt(c2.slice(1,3),16);
+      const g2 = parseInt(c2.slice(3,5),16);
+      const b2 = parseInt(c2.slice(5,7),16);
+
+      const r = Math.round(r1 + (r2 - r1) * ratio);
+      const g = Math.round(g1 + (g2 - g1) * ratio);
+      const b = Math.round(b1 + (b2 - b1) * ratio);
+
+      return `rgb(${r},${g},${b})`;
+    }
+  }
+  return pc[pc.length - 1][1];
+}
+
+function initGauge(){
+  var target = document.getElementById('SOC');
+  gauge = new Gauge(target).setOptions(optsJK);
+  gauge.maxValue = 100;
+  gauge.setMinValue(0);
+  gauge.animationSpeed = 1;
+}
 function setSOC(theSoc){
-  var target=document.getElementById('SOC'); 
-  var gauge=new Gauge(target).setOptions(optsJK);   
-  gauge.maxValue=100; 
-  gauge.setMinValue(0);  
-  gauge.animationSpeed=1; 
-  gauge.set(theSoc); 
+  if (!gauge) initGauge();
+  gauge.set(theSoc);
+  document.getElementById('socText').style.color = getGaugeColor(theSoc);
+  document.getElementById('socText').innerText = theSoc + "%%";
 }
 function set_SWITCH_MosStatus(ch_dsch){
   var theSwitchMOSStatus,theSwitchCurrStatus,objID;
@@ -1547,17 +1698,41 @@ populateGeo();
   .buttonn{background-color:#144964;border:none;color:white;padding:3px;text-align:center;text-decoration:none;display:inline-block;font-size:17px;margin:4px 2px;cursor:pointer;}
   .button1{border-radius:40%%;}
   a:link{color:blue;background-color:transparent;text-decoration:none;}
+  .w45{width:45%%}
+  .w10{width:10%%}
   </style>
 </head>
 <script src="%GAUGE_SOURCE%"></script>
-<body onload="setSOC()">
+<body onload="setSOC(0)">
   <button class="tablink"onclick="closeSocket();window.location.href=window.location.href;"id="defaultOpen"">Status</button> 
   <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'batt';">Battery</button>
   <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'graph';">Monitor</button>
   <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'config';">Settings</button>
   <button class="tablink"onclick="closeSocket();window.location.href=window.location.href + 'fwupgrade';">Upgrade</button>
   <div id="Status"class="tabcontent">
-  <canvas id="SOC"></canvas>
+ 
+  	<td class="w45"></td>
+	<td class="w10">
+	  <div style="position:relative; display:inline-block;">
+	    <canvas id="SOC"></canvas>
+	    <div id="socText"
+	         style="
+	           position:absolute;
+	           top:65%%;
+	           left:50%%;
+	           transform:translate(-50%%, -10%%);
+	           font-size:32px;
+	           font-weight:700;
+	           color:#41cd52;
+	           pointer-events:none;
+	           text-shadow:0px 0px 2px #000;">
+	    </div>
+	  </div>
+	</td>
+  
+  
+  
+  
   <br>SOC <b><span id="soc"></span>&#37  <span id="don"></span></b><br>
   <span id="wbsts"></span>
   <br><b><span id="ctm"></span></b><span id="geo"></span><br>
@@ -1627,7 +1802,7 @@ function onload(event){
 }
 function startSequence(){tID=0;websocket.send("getBMSData 0");}
 function initWebSocket(){
-  console.log('WebSocket Init...');
+  //console.log('WebSocket Init...');
   websocket=new WebSocket(gateway);
   websocket.onopen=onOpen;
   websocket.onclose=onClose;
@@ -1719,15 +1894,49 @@ function SwitchChargeMOS(){
      }
   }
 }
-function setSOC(theSoc){
-  var target=document.getElementById('SOC'); 
-  var gauge;
-  gauge=new Gauge(target).setOptions(optsDY);
-  gauge.maxValue=100; 
-  gauge.setMinValue(0);  
-  gauge.animationSpeed=1; 
-  gauge.set(theSoc); 
+var gauge;
+function getGaugeColor(value){
+  const pc = optsDY.percentColors;
+  const v = value / 100;
+
+  for (let i = 0; i < pc.length - 1; i++){
+    const [p1, c1] = pc[i];
+    const [p2, c2] = pc[i+1];
+
+    if (v >= p1 && v <= p2){
+      const ratio = (v - p1) / (p2 - p1);
+
+      const r1 = parseInt(c1.slice(1,3),16);
+      const g1 = parseInt(c1.slice(3,5),16);
+      const b1 = parseInt(c1.slice(5,7),16);
+
+      const r2 = parseInt(c2.slice(1,3),16);
+      const g2 = parseInt(c2.slice(3,5),16);
+      const b2 = parseInt(c2.slice(5,7),16);
+
+      const r = Math.round(r1 + (r2 - r1) * ratio);
+      const g = Math.round(g1 + (g2 - g1) * ratio);
+      const b = Math.round(b1 + (b2 - b1) * ratio);
+
+      return `rgb(${r},${g},${b})`;
+    }
+  }
+  return pc[pc.length - 1][1];
 }
+function initGauge(){
+  var target = document.getElementById('SOC');
+  gauge = new Gauge(target).setOptions(optsDY);
+  gauge.maxValue = 100;
+  gauge.setMinValue(0);
+  gauge.animationSpeed = 1;
+}
+function setSOC(theSoc){
+  if (!gauge) initGauge();
+  gauge.set(theSoc);
+  document.getElementById('socText').style.color = getGaugeColor(theSoc);
+  document.getElementById('socText').innerText = theSoc + "%%";
+}
+
 function setCH_DSCH_MosStatus( ch_dsch ){
   var theChDisChargMOSStatus;
   var theChDisChCurrStatus;
@@ -1791,224 +2000,6 @@ populateGeo();
 </body>
 </html> 
 <!--FFILE-->
-<!--HFILE:graph-rep.html--> 
-<!doctype html><html lang=en><head><meta charset=UTF-8><title>SmartBMS data Extractor Battery Telemetry</title><meta name=viewport content="width=device-width,initial-scale=1"><script src=/HC.js></script><style>
-body{margin:0;font-family:sans-serif;background:#fff;color:#000;transition:.3s}
-header{padding:14px}.title{font-size:1.2rem;font-weight:600;color:#0af;text-transform:uppercase}
-.subtitle{font-size:.85rem;color:#555}#chart{width:100%%;height:70vh}
-.reload{padding:8px;font-size:.8rem;cursor:pointer;color:#f06}
-.packets{padding:8px;font-size:.8rem;color:#555}.status{padding:4px 8px;font-size:.7rem;color:#777}
-.top-right-controls{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:9999;align-items:flex-end}
-.control-row{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#08f}
-.switch{position:relative;width:38px;height:18px;background:#777;border-radius:18px;cursor:pointer;transition:.25s}
-.switch::after{content:"";position:absolute;width:14px;height:14px;background:#fff;border-radius:50%%;top:2px;left:2px;transition:.25s}
-.switch.on{background:#00c8ff}.switch.on::after{left:22px}
-.dark{background:#0b1020!important;color:#e5e9f0!important}
-</style></head>
-
-<body class=light>
-<header><div class=title>Battery Telemetry</div><div class=subtitle>SmartBMS Data Extractor Log Viewer</div></header>
-
-<div class=top-right-controls>
-<div class=control-row><div id=themeLabel>Light Mode</div><div id=themeSwitch class="switch on" onclick=toggleTheme()></div></div>
-<div class=control-row><div id=autoLabel>Auto Reload</div><div id=autoSwitch class=switch onclick=toggleAutoReload()></div></div>
-</div>
-
-<div id=chart></div>
-
-<div style="display:flex;justify-content:space-between;padding:10px;font-size:.8rem;color:#555;gap:20px">
-<div style="flex:1;min-width:140px">
-<button class=reload onclick=triggerFromESP()>Reload</button>
-<div class=packets id=packets>Packets: 0 | 0 KB</div>
-<div class=status id=status></div>
-</div>
-
-<div style="flex:1;min-width:180px;text-align:right">
-<div style=margin-bottom:6px>Power smoothing:<input id=smoothP type=range min=0 max=20 value=0 step=1 style=width:120px><span id=smoothPval>0</span></div>
-<div style=margin-bottom:6px>Vbat smoothing:<input id=smoothV type=range min=0 max=20 value=15 step=1 style=width:120px><span id=smoothVval>15</span></div>
-<div style=margin-bottom:6px>SOC smoothing:<input id=smoothS type=range min=0 max=20 value=15 step=1 style=width:120px><span id=smoothSval>15</span></div>
-<div style=margin-bottom:6px>Delta smoothing:<input id=smoothD type=range min=0 max=20 value=5 step=1 style=width:120px><span id=smoothDval>5</span></div>
-</div>
-</div>
-<script>
-var chart=null,firstInit=!0,autoReload=!1,autoReloadTimer=null,packetCount=0,logBuffer=new Uint8Array(0),
-seriesState=[!0,!1,!1,!1],smoothP=0,smoothV=15,smoothS=15,smoothD=5,logFileSize=0;
-
-function setStatus(e){document.getElementById("status").textContent=e}
-
-function toggleAutoReload(){
-var e=document.getElementById("autoSwitch"),t=document.getElementById("autoLabel");
-(autoReload=e.classList.toggle("on"))?(t.textContent="Auto Reload ON",autoReloadTimer=setInterval(triggerFromESP,6e4)):(t.textContent="Auto Reload",clearInterval(autoReloadTimer),autoReloadTimer=null)
-}
-
-function parseBinaryLog(e){
-var t=new DataView(e.buffer),o=0,a=0,s=0,n=[],r=[],i=[],l=[];
-for(t.byteLength>=6&&65535===t.getUint16(0,!0)&&(a=t.getUint32(2,!0),o=6);o<t.byteLength&&!(o+2>t.byteLength);){
-var h=t.getUint16(o,!0);o+=2;
-var c=h>>13,u=1e3*(a+(s+=8191&h));
-if(0===c){
-if(o+2>t.byteLength)break;
-n.push([u,t.getInt16(o,!0)]),o+=2
-}else{
-if(1!==c)break;
-if(o+6>t.byteLength)break;
-var d=t.getUint8(o);o++;
-var m=t.getUint16(o,!0);o+=2;
-var f=t.getUint16(o,!0);o+=2;o++;
-r.push([u,d]),i.push([u,m]),l.push([u,f/10])
-}}
-return{p:n,s:r,d:i,v:l}
-}
-
-function smoothSeries(e,t){
-if(t<=0||e.length<3)return e;
-let o=[];
-for(let a=0;a<e.length;a++){
-let s=0,n=0;
-for(let o=a-t;o<=a+t;o++)o>=0&&o<e.length&&(s+=e[o][1],n++);
-o.push([e[a][0],s/n])
-}
-return o
-}
-
-function buildDashedSeries(e,t){
-if(e.length<2)return[];
-for(var o=[],a=1;a<e.length;a++){
-var s=e[a-1],n=e[a];
-n[0]-s[0]>3e5&&o.push({name:"gap_"+t,type:"spline",turboThreshold:0,linecap:"round",data:[[s[0]-1,s[1]],s,n],dashStyle:"Dash",color:null,enableMouseTracking:!1,tooltip:{enabled:!1},marker:{enabled:!1},lineWidth:2,animation:!1,showInLegend:!1})
-}
-return o
-}
-
-function updateAxisVisibility(){
-if(chart){
-var e=chart.yAxis;
-e[0].update({title:{text:chart.series.some((e=>"Power"===e.name&&e.visible))?"[W]":""}},!1),
-e[1].update({title:{text:chart.series.some((e=>"Vbat"===e.name&&e.visible))?"[V]":""}},!1),
-e[2].update({title:{text:chart.series.some((e=>"SOC"===e.name&&e.visible))?"%%":""}},!1),
-e[3].update({title:{text:chart.series.some((e=>"Delta"===e.name&&e.visible))?"mV":""}},!1),
-chart.redraw()
-}}
-function createChart(e){
-if(chart){
-seriesState=[];
-for(var t=0;t<chart.series.length;t++)seriesState.push(chart.series[t].visible);
-chart.destroy()
-}
-
-smoothP>0&&(e.p=smoothSeries(e.p,smoothP)),
-smoothV>0&&(e.v=smoothSeries(e.v,smoothV)),
-smoothS>0&&(e.s=smoothSeries(e.s,smoothS)),
-smoothD>0&&(e.d=smoothSeries(e.d,smoothD));
-
-var o=buildDashedSeries(e.p,"power"),
-a=buildDashedSeries(e.v,"vbat"),
-s=buildDashedSeries(e.s,"soc"),
-n=buildDashedSeries(e.d,"delta"),
-r=document.body.classList.contains("dark"),
-i=[];
-
-i.push({name:"Power",type:"spline",data:e.p,yAxis:0,zones:[{value:0,color:"#ff4444"},{color:"#22cc22"}]}),
-o.forEach(e=>i.push(e)),
-i.push({name:"Vbat",type:"spline",data:e.v,yAxis:1,color:"#fdd835",visible:!1}),
-a.forEach(e=>i.push(e)),
-i.push({name:"SOC",type:"spline",data:e.s,yAxis:2,color:"#a855f7",visible:!1}),
-s.forEach(e=>i.push(e)),
-i.push({name:"Delta",type:"spline",data:e.d,yAxis:3,color:"#f97316",visible:!1}),
-n.forEach(e=>i.push(e));
-
-chart=Highcharts.chart("chart",{
-chart:{backgroundColor:r?"#0b1020":"#fff",zoomType:"x",marginTop:50},
-accessibility:{enabled:!1},
-legend:{enabled:!0,useHTML:!0,itemStyle:{color:r?"#e5e9f0":"#000"},labelFormatter:function(){return this.name.startsWith("gap_")?"":this.name}},
-title:{text:""},
-credits:{enabled:!0},
-xAxis:{type:"datetime",labels:{style:{color:r?"#aaa":"#000"}}},
-plotOptions:{spline:{linecap:"round",animation:!1,softThreshold:!0,tension:.45},series:{turboThreshold:0,stickyTracking:!1,marker:{enabled:!1},lineWidth:2}},
-yAxis:[
-{title:{text:"[W]",rotation:0,align:"high",y:-5,x:10,style:{color:"#38bdf8",fontSize:"11px"}},labels:{style:{color:"#38bdf8",fontSize:"10px"}},offset:10},
-{title:{text:"Vbat",rotation:0,align:"low",y:20,x:10,style:{color:"#22c55e",fontSize:"11px"}},labels:{style:{color:"#22c55e",fontSize:"10px"}},offset:50},
-{title:{text:"SOC",rotation:0,align:"high",y:-5,x:-10,style:{color:"#a855f7",fontSize:"11px"}},labels:{style:{color:"#a855f7",fontSize:"10px"}},opposite:!0,offset:10},
-{title:{text:"Delta",rotation:0,align:"low",y:20,x:-10,style:{color:"#f97316",fontSize:"11px"}},labels:{style:{color:"#f97316",fontSize:"10px"}},opposite:!0,offset:50}
-],
-tooltip:{shared:!1,useHTML:!1,crosshairs:!0,snap:0,formatter:function(){
-if(this.series.name.startsWith("gap_"))return!1;
-var e="Power"===this.series.name?" W":"Vbat"===this.series.name?" V":"SOC"===this.series.name?" %%":"Delta"===this.series.name?" mV":"";
-return Highcharts.dateFormat("%%H:%%M:%%S",this.x)+" | "+this.series.name+": "+this.y.toFixed(1)+e
-}},
-series:i
-});
-
-chart.series.forEach(e=>{e.update({events:{show:updateAxisVisibility,hide:updateAxisVisibility}},!1)});
-updateAxisVisibility();
-
-if(firstInit){
-chart.series.forEach(e=>{"Power"===e.name||"gap_power"===e.name?e.show():e.hide()});
-firstInit=!1
-}else{
-for(t=0;t<chart.series.length;t++)seriesState[t]?chart.series[t].show():chart.series[t].hide()
-}
-}
-
-function toggleTheme(){
-var e=document.getElementById("themeSwitch"),t=document.getElementById("themeLabel");
-e.classList.toggle("on")?(document.body.classList.remove("dark"),t.textContent="Light Mode"):(document.body.classList.add("dark"),t.textContent="Dark Mode"),
-createChart(parseBinaryLog(logBuffer))
-}
-
-function openWsOnce(){
-setStatus("Opening WebSocket...");
-logBuffer=new Uint8Array(0);
-packetCount=0;
-document.getElementById("packets").textContent="Packets: 0 | 0 KB";
-
-var e=new WebSocket("ws://"+location.host+"/ws");
-e.binaryType="arraybuffer";
-
-e.onopen=function(){e.send("GET_LOG")};
-
-e.onmessage=function(t){
-if("#END"===t.data){
-createChart(parseBinaryLog(logBuffer));
-e.close();
-return;
-}
-const msg = String(t.data);
-if (msg.startsWith("#LSIZE:")) {logFileSize = parseInt(msg.substring(7), 10);}
-if(t.data instanceof ArrayBuffer){
-var o=new Uint8Array(t.data),a=new Uint8Array(logBuffer.length+o.length);
-a.set(logBuffer);
-a.set(o,logBuffer.length);
-logBuffer=a;
-packetCount++;
-var kb=(logBuffer.length/1024).toFixed(1);
-var prg = ((logBuffer.length/logFileSize) * 100).toFixed(0) + "%";
-document.getElementById("packets").textContent="Packets: "+packetCount+" | "+kb+" KB "+prg;
-logFileSize
-}
-};
-
-e.onerror=function(){setStatus("WebSocket Error")};
-e.onclose=function(){setStatus("WebSocket Closed")};
-}
-
-function triggerFromESP(){
-fetch("/openws?rand="+Math.random())
-.then(e=>e.text())
-.then(js=>eval(js));
-}
-
-document.addEventListener("DOMContentLoaded",function(){
-document.getElementById("smoothP").oninput=function(){smoothP=parseInt(this.value);document.getElementById("smoothPval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
-document.getElementById("smoothV").oninput=function(){smoothV=parseInt(this.value);document.getElementById("smoothVval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
-document.getElementById("smoothS").oninput=function(){smoothS=parseInt(this.value);document.getElementById("smoothSval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
-document.getElementById("smoothD").oninput=function(){smoothD=parseInt(this.value);document.getElementById("smoothDval").textContent=this.value;createChart(parseBinaryLog(logBuffer))};
-setTimeout(triggerFromESP,500);
-});
-</script>
-</body></html>
-
-<!--FFILE-->
 <!--HFILE:IoTMQTTPanel.html--> 
 <!DOCTYPE html>
 <html lang="en">
@@ -2061,6 +2052,7 @@ img {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <h2>JSON IoTMQTTPanel Trimmer</h2>
 <button id="btnDownload">Download</button>
+<button id="btnLayBuild">Open Layout Builder</button>
 <h3>Output JSON (non-minified):</h3>
 <pre id="out"></pre>
 <p>Example of panel layout generated by the dongle</p>
@@ -2121,6 +2113,40 @@ function downloadFile(text,filename) {
     a.click();
     URL.revokeObjectURL(url);
 }
+
+document.getElementById("btnLayBuild").addEventListener("click", async () => {
+    const remoteWindow = window.open(
+        "https://www.dalybmswifi.com/jsonbuilder/index.php",
+        "_blank"
+    );
+
+    try {
+        const resp = await fetch("./IoTMQTTPanel.json.gz");
+        const compressed = new Uint8Array(await resp.arrayBuffer());
+        let content = pako.ungzip(compressed, { to: "string" });
+        content = applyTagReplacements(content);
+        const original = JSON.parse(content);
+        const trimmed = trimAllBatteriesPanelsImmutable(
+            original,
+            numOfBatts
+        );
+        const minified = minifyJson(trimmed);
+        setTimeout(() => {
+            remoteWindow.postMessage(
+                {
+                    jsonFileName: "IoTMQTTPanel.json",
+                    jsonContent: minified,
+                    token: "SSBdE2026"
+                },
+                "*"
+            );
+        }, 1000);
+    }
+    catch (e) {
+        console.error(e);
+    }
+});
+
 document.addEventListener("DOMContentLoaded",() => {
     document.getElementById("btnDownload").addEventListener("click",async() => {
         const num=numOfBatts;
@@ -2160,7 +2186,7 @@ document.addEventListener("DOMContentLoaded",() => {
     .btn-group button:not(:last-child) { border-right:none; }
     .btn-group button:hover { background-color:#3e8e41; }
   </style>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
 </head>
 <body>
   <button class="tablink" onclick="window.location.href='/'">Status</button>
@@ -2183,7 +2209,7 @@ document.addEventListener("DOMContentLoaded",() => {
       <li><strong>PUSH SERVICES</strong> full featured; push services, all Reports, all failures</li>
       <li><strong>HOSTNAME</strong> fully configurable</li>
       <li><strong>COLOR DISPLAY DASHBOARD ID</strong> free DashBoard ID and Name</li>
-      <li><strong>UART TUNNEL</strong> Full featured with 90s inactivity timeout window</li>
+      <li><strong>UART TUNNEL</strong> Full featured with 120s inactivity timeout window</li>
       <li><strong>CHARGING/DISCHARGING MOS</strong> You can decide to manage them via WEB pages or MQTT</li>
     </ol>
     <p><strong>Unlicensed</strong> sw is FULL-functional with some limitations:</p>
@@ -2196,7 +2222,7 @@ document.addEventListener("DOMContentLoaded",() => {
       <li><strong>PUSH SERVICES</strong> sunrise/sunset Report are sent – <strong>no Alarms</strong> sent</li>
       <li><strong>HOSTNAME</strong> fixed to SmatBMS</li>
       <li><strong>COLOR DISPLAY DASHBOARD ID</strong> fixed to DashBoard ID = 1 without DashBoard Name → ONLY one BMS can be shown on the display</li>
-      <li><strong>UART TUNNEL</strong> Full featured with 10s inactivity timeout window</li>
+      <li><strong>UART TUNNEL</strong> Full featured with 30s inactivity timeout window</li>
       <li><strong>CHARGING/DISCHARGING MOS</strong> management Not Supported either via WEB and MQTT</li>
     </ol>
     <p>You can request a <i><strong>FOUR weeks free license</strong></i> for testing the platform. <a href="mailto:info@dalybmswifi.com?subject=LICENCE four weeks free test Request&body=Dongle ID  %platformMAC%">ASK FOR YOUR FREE TRIAL</a></p>
@@ -3272,7 +3298,7 @@ ckFieldSize();
       <span id="sscan"></span>
       PASSPHRASE: <input type="password" id="inPWD" name="inPWD" value="%inPWD%" maxlength="64" size="5" oninput="ckFieldSize()">
       <input type="checkbox" onclick="showPwd()"><br>
-      WiFi Power [dBm]: <input type="number" min="0" max="20" step="1" name="inputWiFiPower" value="%inputWiFiPower%" size="2"><br><br>
+      WiFi Power [dBm]: <input type="number" min="0" max="255" step="1" name="inputWiFiPower" id="inputWiFiPower" value="%inputWiFiPower%" title="0-20=Manual, 127=AUTO" oninput="let v=parseInt(this.value);if(v<0||isNaN(v))this.value=0;else if(v>20&&v<127)this.value=127;else if(v>127)this.value=0;"><br><br>
       <font id="currentIP_PORT"></font>
       HostName: <input type="text" name="HostName" id="HostName" value="%HostName%" maxlength="10" size="10"><br>
       Static IP: <input type="checkbox" name="staticIP" id="ckSIP" %staticIP% onclick="handleDHCPClick()"><br>
@@ -3341,8 +3367,7 @@ ckFieldSize();
       if (!w) return;
       w.setAttribute("data-position", "Right-Bottom");
     });
-  </script>
-  <script>
+
     openTab('red');
     if(!%fwStatus%){
       let f=document.getElementById("fwStat");
@@ -3489,11 +3514,12 @@ openTab('red');
 
         Virtual UART Mode:
         <select id="vMode"
-                onfocus="editing.vMode = true"
-                onblur="wsSendMode()">
-          <option value="0">SERVER</option>
-          <option value="1">CLIENT</option>
+          onfocus="editing.vMode=true"
+          onchange="wsSendMode()">
+        <option value="0">SERVER</option>
+        <option value="1">CLIENT</option>
         </select><br><br>
+
 
         <!-- IP/HOSTNAME -->
         <div id="vIPbox" style="display:none;margin-top:10px">
@@ -3614,6 +3640,8 @@ openTab('red');
         document.getElementById("vIPbox").style.display = (mode === 1) ? "block" : "none";
         if(!ws||ws.readyState!==1)return
         ws.send(JSON.stringify({vSC:mode}))
+      ws.send(JSON.stringify({vSC:mode}))
+      ws.send(JSON.stringify({vSC:mode}))
         editing.vMode = false;
       }
 
@@ -3714,5 +3742,5 @@ openTab('red');
 <!--FFILE-->
 <!--HFILE:version.html--> 
 {
- "ver": "web-3.6.0.all"
+ "ver": "web-3.6.4.all"
 }<!--FFILE-->

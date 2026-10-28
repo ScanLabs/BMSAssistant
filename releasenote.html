@@ -7,7 +7,42 @@
 	and onsite <strong><a href="https://dalybmswifi.com/forum">FORUM</a></strong></div><br>
 <div>Step By Step DIY & Configuration Manual @ <strong><a href="https://www.dalybmswifi.com/build-it/">MANUAL</a></strong></div>
 <div>&nbsp;</div>
-<div><b>3.6.1 released on 14 July 2026</b></div>
+<div><b>3.6.4 released on 03 Oct 2026</b></div>
+<div>&nbsp;</div>
+<div><b>NEW: IoTMQTTPanel Layout Builder</b></div>
+<div>&nbsp;&nbsp;Accessible from MQTT page of SSBdE</div>
+<div><b>AT COMMAND</b></div>
+<div>&nbsp;&nbsp;added AT-NET, AT-DHCP to manage nework parameter</div>
+<div>&nbsp;&nbsp;added to AT-WMODE modes 11B 11G 11N to permantely set radio phy as you wish</div>
+<div><b>WEB PAGE LAYOUT</b></div>
+<div>&nbsp;&nbsp;Added SOC percentage overimposed on the Graphical Gauge</div>
+<div>&nbsp;</div>
+<div>3.6.3 released on 31 Aug 2026</div>
+<div>&nbsp;</div>
+<div><b>MONITOR GRAPH</b></div>
+<div>&nbsp;&nbsp;Fix: Monitor Graph sometimes cannot detect day rollover resulting in a neverending logging consuming all the flash</div>
+<div>&nbsp;&nbsp;Add: Monitor page now takes history of the settings made</div>
+<div><b>JK -001- protocol</b></div>
+<div>&nbsp;&nbsp;Fix: Reporting positive WATTs even with negative Currents - patch added to detect JK bug and fix</div>
+<div><b>VIRTUAL COM PAGES</b></div>
+<div>&nbsp;&nbsp;Fix: Slow Internet connection prevent to change MODE and IP</div>
+<div><b>WEBPAGES</b></div>
+<div>&nbsp;&nbsp;Fix: Settings page COORDINATE select back operative</div>
+<div>&nbsp;&nbsp;Fix: Welcome page in factory mode now support RFPOWER AUTO=127 + page layout redesign</div>
+<div><b>MODBUS</b></div>
+<div>&nbsp;&nbsp;Fix:  ModBus ID 106 and 107 now contains Cell MAX[mV] and Cell MIN[mV] while 190 and 191 the ID of battery having MAX[mV] and MIN[mV]</div>
+<div>&nbsp;&nbsp;Fix: Balance current  - ModBus ID 180 support uint16_t</div>
+<div>&nbsp;</div>
+<div>3.6.2 released on 30 July 2026</div>
+<div>&nbsp;</div>
+<div><b>AUTO TIME ZONE</b></div>
+<div>&nbsp;&nbsp;Fix: Dongle now use Internet IP to retrieve roughly COORDINATES to assume TZ</div>
+<div><b>AUTO WIFI POWER</b></div>
+<div>&nbsp;&nbsp;in MISC page, setting output WiFi Power to 127, it enable auto-power set function of signal strength</div>
+<div><b>FIXES</b></div>
+<div>&nbsp;&nbsp;Fix: Race condition on OLED display driver bring to display to stuck after a while</div>
+<div>&nbsp;</div>
+<div>3.6.1 released on 14 July 2026</div>
 <div>&nbsp;</div>
 <div><b>HOME ASSISTANT DISCOVERY</b></div>
 <div>&nbsp;&nbsp;Home Assistant Discovery now disabled by default</div>
